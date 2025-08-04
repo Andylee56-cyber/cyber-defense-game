@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能守护者联盟 - 游戏游玩</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 3px solid #00ffff;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        .game-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 250px;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <div class="game-info">
+        <h3>🎮 游戏状态</h3>
+        <div>分数: <span id="score">0</span></div>
+        <div>安全等级: <span id="securityLevel">100%</span></div>
+        <div>知识点: <span id="knowledgePoints">0</span></div>
+    </div>
+    
+    <div class="controls">
+        <h4>🎯 游戏控制</h4>
+        <div>• 拖拽指挥官移动</div>
+        <div>• 点击底部按钮选择Agent</div>
+        <div>• 点击屏幕部署Agent</div>
+        <div>• 自动防御威胁</div>
+        <button onclick="restartGame()">重新开始</button>
+        <button onclick="togglePause()">暂停/继续</button>
+    </div>
+    
+    <button class="back-button" onclick="goBack()">返回说明</button>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        const canvas = document.getElementById('gameCanvas');
+        window.canvas = canvas;
+        window.GameGlobal = {};
+        
+        const game = new Main();
+        
+        function restartGame() {
+            console.log('🎮 游戏重新开始');
+        }
+        
+        function togglePause() {
+            console.log('⏸️ 暂停/继续游戏');
+        }
+        
+        function goBack() {
+            window.location.href = 'start.html';
+        }
+        
+        window.restartGame = restartGame;
+        window.togglePause = togglePause;
+        window.goBack = goBack;
+        
+        console.log('🎮 游戏游玩界面加载完成');
+    </script>
+</body>
+</html> 
