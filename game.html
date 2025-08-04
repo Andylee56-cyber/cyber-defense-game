@@ -3,377 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能守护者联盟 - 游戏界面</title>
+    <title>智能守护者联盟 - 游戏</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #0a0a2a 100%);
-            font-family: 'Arial', sans-serif;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
             color: #ffffff;
             overflow: hidden;
         }
         
-        .grid-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-        }
-        
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-        
         #gameCanvas {
             display: block;
-            margin: 20px auto;
-            border: 3px solid #00ffff;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        .game-info {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            margin: 0 auto;
             border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 20px;
-            min-width: 250px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         
-        .game-info h3 {
-            color: #00ffff;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-        }
-        
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 20px;
-            min-width: 280px;
-        }
-        
-        .controls h4 {
-            color: #00ffff;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .control-item {
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .control-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .control-btn {
-            background: linear-gradient(45deg, #0080ff, #00ffff);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .control-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .back-btn {
+        .back-button {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
-            color: white;
+            background: #ff6b6b;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            z-index: 1000;
         }
         
-        .back-btn:hover {
-            transform: translateY(-3px);
+        .back-button:hover {
+            background: #ff5252;
         }
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     
-    <div class="game-info">
-        <h3>🛡️ 智能守护者联盟</h3>
-        <div class="info-item">
-            <span>状态:</span>
-            <span id="gameStatus">运行中</span>
-        </div>
-        <div class="info-item">
-            <span>分数:</span>
-            <span id="score">0</span>
-        </div>
-        <div class="info-item">
-            <span>安全等级:</span>
-            <span id="securityLevel">100%</span>
-        </div>
-        <div class="info-item">
-            <span>知识点:</span>
-            <span id="knowledgePoints">0</span>
-        </div>
-        <div class="info-item">
-            <span>等级:</span>
-            <span id="level">1</span>
-        </div>
-        <div class="info-item">
-            <span>能量:</span>
-            <span id="energy">100</span>
-        </div>
-        <div class="info-item">
-            <span>威胁数:</span>
-            <span id="threatCount">0</span>
-        </div>
-    </div>
-    
-    <div class="controls">
-        <h4>🎮 控制说明</h4>
-        <div class="control-item">• 拖拽指挥官移动</div>
-        <div class="control-item">• 点击底部按钮选择Agent</div>
-        <div class="control-item">• 点击屏幕部署Agent</div>
-        <div class="control-item">• 自动防御威胁</div>
-        <div class="control-item">• 空格键暂停/继续</div>
-        <div class="control-item">• R键重新开始</div>
+    <button class="back-button" onclick="goBack()">返回主菜单</button>
+
+    <script type="module">
+        import Main from './js/main.js';
         
-        <div class="control-buttons">
-            <button class="control-btn" onclick="restartGame()">🔄 重新开始</button>
-            <button class="control-btn" onclick="togglePause()">⏸️ 暂停/继续</button>
-            <button class="control-btn" onclick="showGameHelp()">❓ 帮助</button>
-        </div>
-    </div>
-    
-    <button class="back-btn" onclick="goBack()">返回主界面</button>
-
-    <script>
-        window.wx = {
-            createInnerAudioContext: function() {
-                return {
-                    src: '', loop: false, volume: 1,
-                    play: function() { console.log('播放音频'); },
-                    stop: function() { console.log('停止音频'); },
-                    destroy: function() { console.log('销毁音频'); }
-                };
-            },
-            onTouchStart: function(callback) { console.log('注册触摸开始事件'); },
-            onTouchMove: function(callback) { console.log('注册触摸移动事件'); },
-            onTouchEnd: function(callback) { console.log('注册触摸结束事件'); },
-            vibrateShort: function() { console.log('震动'); }
-        };
-
-        window.GameGlobal = {
-            databus: null, musicManager: null, gameInfo: null, commander: null
-        };
-
-        Object.defineProperty(window, 'innerWidth', { get: function() { return 800; } });
-        Object.defineProperty(window, 'innerHeight', { get: function() { return 600; } });
-
-        let isPaused = false;
-        let gameScore = 0;
-        let securityLevel = 100;
-        let knowledgePoints = 0;
-        let gameLevel = 1;
-        let energy = 100;
-        let threatCount = 0;
-        let gameStartTime = Date.now();
-        let lastThreatSpawn = 0;
-
-        function restartGame() {
-            console.log('🔄 重新开始游戏');
-            gameScore = 0;
-            securityLevel = 100;
-            knowledgePoints = 0;
-            gameLevel = 1;
-            energy = 100;
-            threatCount = 0;
-            gameStartTime = Date.now();
-            lastThreatSpawn = 0;
-            updateGameInfo();
-            document.getElementById('gameStatus').textContent = '运行中';
-            isPaused = false;
-        }
-
-        function togglePause() {
-            isPaused = !isPaused;
-            const status = isPaused ? '已暂停' : '运行中';
-            console.log(isPaused ? '⏸️ 游戏暂停' : '▶️ 游戏继续');
-            document.getElementById('gameStatus').textContent = status;
-        }
-
+        const canvas = document.getElementById('gameCanvas');
+        window.canvas = canvas;
+        window.GameGlobal = {};
+        
+        const game = new Main();
+        
         function goBack() {
-            console.log('🏠 返回主界面');
             window.location.href = 'main.html';
         }
         
-        function showGameHelp() {
-            alert('🎮 游戏帮助\n\n' +
-                  '🛡️ 游戏目标：保护网络安全，拦截各种威胁\n' +
-                  '🎯 操作方式：\n' +
-                  '• 拖拽指挥官到合适位置\n' +
-                  '• 点击底部Agent按钮选择类型\n' +
-                  '• 点击屏幕部署Agent\n' +
-                  '• 自动防御威胁\n\n' +
-                  '⌨️ 快捷键：\n' +
-                  '• 空格键：暂停/继续\n' +
-                  '• R键：重新开始\n' +
-                  '• ESC键：返回主界面');
-        }
+        window.goBack = goBack;
         
-        function spawnThreat() {
-            const now = Date.now();
-            if (now - lastThreatSpawn > 2000) { // 每2秒生成一个威胁
-                threatCount++;
-                lastThreatSpawn = now;
-                console.log('⚠️ 生成威胁 #' + threatCount);
-            }
-        }
-        
-        function levelUp() {
-            if (gameScore >= gameLevel * 1000) {
-                gameLevel++;
-                energy = Math.min(100, energy + 20);
-                console.log('🎉 升级到等级 ' + gameLevel);
-                alert('🎉 恭喜升级到等级 ' + gameLevel + '！\n能量恢复 +20');
-            }
-        }
-
-        function updateGameInfo() {
-            document.getElementById('score').textContent = gameScore;
-            document.getElementById('securityLevel').textContent = securityLevel + '%';
-            document.getElementById('knowledgePoints').textContent = knowledgePoints;
-            document.getElementById('level').textContent = gameLevel;
-            document.getElementById('energy').textContent = energy;
-            document.getElementById('threatCount').textContent = threatCount;
-        }
-
-        function gameLoop() {
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = 'rgba(10, 10, 42, 0.8)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = '#00ffff';
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.3;
-            
-            for (let x = 0; x <= canvas.width; x += 40) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
-            }
-            
-            for (let y = 0; y <= canvas.height; y += 40) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
-            
-            ctx.globalAlpha = 1;
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 24px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('智能守护者联盟 - 游戏模式', canvas.width/2, 50);
-            
-            ctx.font = '16px Arial';
-            ctx.fillStyle = '#00ffff';
-            ctx.fillText('请使用微信开发者工具运行完整游戏', canvas.width/2, canvas.height/2);
-            ctx.fillText('或使用支持ES6模块的现代浏览器', canvas.width/2, canvas.height/2 + 30);
-
-            if (!isPaused) {
-                // 游戏逻辑更新
-                gameScore += Math.floor(Math.random() * 5);
-                if (securityLevel > 50) {
-                    securityLevel -= Math.random() * 2;
-                }
-                knowledgePoints += Math.floor(Math.random() * 3);
-                
-                // 生成威胁
-                spawnThreat();
-                
-                // 检查升级
-                levelUp();
-                
-                // 能量消耗
-                if (energy > 0) {
-                    energy -= 0.1;
-                }
-                
-                updateGameInfo();
-            }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // 键盘事件监听
-        document.addEventListener('keydown', function(e) {
-            switch(e.key) {
-                case ' ':
-                    e.preventDefault();
-                    togglePause();
-                    break;
-                case 'r':
-                case 'R':
-                    e.preventDefault();
-                    restartGame();
-                    break;
-                case 'Escape':
-                    e.preventDefault();
-                    goBack();
-                    break;
-            }
-        });
-        
-        window.addEventListener('load', function() {
-            console.log('🎮 游戏界面加载完成');
-            gameLoop();
-            console.log('📱 游戏已启动');
-            console.log('⌨️ 键盘控制已启用：空格键暂停，R键重启，ESC键返回');
-        });
+        console.log('🎮 游戏已启动');
     </script>
 </body>
 </html> 
