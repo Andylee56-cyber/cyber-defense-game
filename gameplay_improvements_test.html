@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏玩法改进测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        .test-section {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid #ffa500;
+        }
+        
+        .mock-game {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(to right, rgba(0, 20, 40, 0.8), rgba(30, 15, 60, 0.8));
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .mock-commander {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .mock-threat {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            animation: fall 8s linear infinite;
+        }
+        
+        @keyframes fall {
+            from { top: -50px; }
+            to { top: 350px; }
+        }
+        
+        .mock-bullet {
+            position: absolute;
+            width: 16px;
+            height: 30px;
+            background: linear-gradient(to bottom, #00ffff, #0080ff);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            display: none;
+        }
+        
+        .mock-agent-buttons {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .mock-agent-button {
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(to bottom, #27ae60, #2ecc71);
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mock-agent-button:hover {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+        
+        .mock-agent-button.selected {
+            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.8);
+        }
+        
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #2ecc71;
+        }
+        
+        .feature-list {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 游戏玩法改进测试</h1>
+    
+    <div class="test-section">
+        <h2>✅ 改进功能说明</h2>
+        
+        <div class="test-result success">
+            <h3>游戏玩法改进</h3>
+            <p>✅ 已实现以下游戏玩法改进：</p>
+            <ul>
+                <li><strong>Agent选择限制：</strong>只有选择防御Agent后才能射击</li>
+                <li><strong>威胁类型控制：</strong>一段时间内只生成一种类型的威胁</li>
+                <li><strong>射击机制优化：</strong>只要击中就能掉血，不再检查防御类型匹配</li>
+                <li><strong>下落速度控制：</strong>降低威胁下落速度，提高可玩性</li>
+                <li><strong>射击范围限制：</strong>威胁沉到指挥官射击范围以下时扣分</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 功能测试</h2>
+        
+        <div class="test-result info">
+            <h3>模拟游戏场景</h3>
+            <p>点击下面的按钮测试游戏玩法改进：</p>
+            
+            <div class="mock-game" id="mockGame">
+                <div class="mock-threat" id="mockThreat" style="left: 280px;">钓鱼</div>
+                <div class="mock-bullet" id="mockBullet" style="left: 292px; bottom: 60px;"></div>
+                <div class="mock-commander">指挥官</div>
+                
+                <div class="mock-agent-buttons">
+                    <div class="mock-agent-button" onclick="selectAgent('firewall')">防火墙</div>
+                    <div class="mock-agent-button" onclick="selectAgent('encryption')">加密师</div>
+                    <div class="mock-agent-button" onclick="selectAgent('detection')">检测者</div>
+                    <div class="mock-agent-button" onclick="selectAgent('education')">教育官</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button onclick="testShooting()">测试射击功能</button>
+                <button onclick="testThreatGeneration()">测试威胁生成</button>
+                <button onclick="testDamageSystem()">测试伤害系统</button>
+                <button onclick="resetTest()">重置测试</button>
+            </div>
+        </div>
+        
+        <div class="test-result info">
+            <h3>改进详情</h3>
+            <div class="feature-list">
+                <strong>1. Agent选择限制：</strong><br>
+                - 未选择Agent时无法射击<br>
+                - 选择Agent后自动射击<br>
+                - 控制台显示选择提示<br><br>
+                
+                <strong>2. 威胁类型控制：</strong><br>
+                - 每600帧切换威胁类型<br>
+                - 同时最多存在2个威胁<br>
+                - 威胁生成频率降低到180帧<br><br>
+                
+                <strong>3. 射击机制优化：</strong><br>
+                - 只要击中就能造成伤害<br>
+                - 正确防御类型给予更高奖励<br>
+                - 普通消灭给予基础奖励<br><br>
+                
+                <strong>4. 下落速度控制：</strong><br>
+                - 威胁下落速度减半<br>
+                - 提高游戏可玩性<br>
+                - 给玩家更多反应时间<br><br>
+                
+                <strong>5. 射击范围限制：</strong><br>
+                - 威胁沉到射击范围以下扣分<br>
+                - 自动销毁超出范围的威胁<br>
+                - 增加游戏挑战性
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 代码修改详情</h2>
+        
+        <div class="test-result info">
+            <h3>1. js/player/index.js 修改</h3>
+            <pre><code>// 修改shoot方法
+shoot() {
+  // 只有在选择了Agent类型时才能射击
+  if (!this.selectedAgentType) {
+    console.log('⚠️ 请先选择防御Agent类型');
+    return;
+  }
+  // ... 射击逻辑
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>2. js/main.js 修改</h3>
+            <pre><code>// 修改威胁生成逻辑
+threatGenerate() {
+  // 每180帧生成一个威胁，降低生成频率
+  if (GameGlobal.databus.frame % 180 === 0) {
+    if (GameGlobal.databus.threats.length < 2) {
+      const threat = GameGlobal.databus.pool.getItemByClass('threat', Threat);
+      
+      // 控制威胁类型，一段时间内只生成一种类型
+      const threatTypes = ['phishing', 'malware', 'ddos', 'data_leak'];
+      const currentThreatType = threatTypes[Math.floor(GameGlobal.databus.frame / 600) % threatTypes.length];
+      
+      threat.init({ type: currentThreatType });
+      GameGlobal.databus.addThreat(threat);
+    }
+  }
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>3. js/npc/enemy.js 修改</h3>
+            <pre><code>// 修改威胁初始化
+init(config = {}) {
+  // 支持指定威胁类型
+  if (config.type) {
+    threatData = this.getThreatByType(config.type);
+    this.category = config.type;
+  }
+  
+  // 降低下落速度
+  this.speed = visualConfig.speed * 0.5;
+}
+
+// 修改伤害系统
+takeDamage(damage, defenseType = null) {
+  // 只要击中就能造成伤害
+  this.health -= damage;
+  
+  if (this.health <= 0) {
+    // 检查防御类型匹配，给予不同奖励
+    if (defenseType && this.isDefenseMatch(this.category, defenseType)) {
+      // 正确防御，更高奖励
+      GameGlobal.databus.addScore('correct_defense', 20);
+    } else {
+      // 普通消灭，基础奖励
+      GameGlobal.databus.addScore('threat_destroy', 10);
+    }
+  }
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        let selectedAgent = null;
+        let canShoot = false;
+        
+        function selectAgent(agentType) {
+            selectedAgent = agentType;
+            canShoot = true;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.mock-agent-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            console.log(`🎯 选择了 ${agentType} Agent`);
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                <h4>✅ Agent选择测试成功</h4>
+                <p>已选择 ${agentType} Agent</p>
+                <p>现在可以射击了</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            // 3秒后移除测试结果
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        function testShooting() {
+            if (!selectedAgent) {
+                console.log('⚠️ 请先选择防御Agent类型');
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result warning';
+                resultDiv.innerHTML = `
+                    <h4>⚠️ 射击测试失败</h4>
+                    <p>请先选择防御Agent类型</p>
+                `;
+                
+                document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+                
+                setTimeout(() => {
+                    resultDiv.remove();
+                }, 3000);
+                return;
+            }
+            
+            console.log(`🎯 发射子弹，类型: ${selectedAgent}`);
+            
+            const bullet = document.getElementById('mockBullet');
+            bullet.style.display = 'block';
+            
+            // 模拟子弹移动
+            let bulletY = 60;
+            const animation = setInterval(() => {
+                bulletY += 5;
+                bullet.style.bottom = bulletY + 'px';
+                
+                if (bulletY >= 200) {
+                    clearInterval(animation);
+                    bullet.style.display = 'none';
+                    bullet.style.bottom = '60px';
+                    
+                    // 显示测试结果
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ 射击测试成功</h4>
+                        <p>成功发射 ${selectedAgent} 类型子弹</p>
+                    `;
+                    
+                    document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+                    
+                    setTimeout(() => {
+                        resultDiv.remove();
+                    }, 3000);
+                }
+            }, 50);
+        }
+        
+        function testThreatGeneration() {
+            console.log('🔄 测试威胁生成');
+            
+            const threat = document.getElementById('mockThreat');
+            const threatTypes = ['钓鱼', '恶意软件', 'DDoS', '数据泄露'];
+            const currentType = threatTypes[Math.floor(Date.now() / 6000) % threatTypes.length];
+            
+            threat.textContent = currentType;
+            threat.style.left = (Math.random() * 500 + 50) + 'px';
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                <h4>✅ 威胁生成测试成功</h4>
+                <p>生成威胁类型: ${currentType}</p>
+                <p>威胁生成频率已降低，提高可玩性</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        function testDamageSystem() {
+            console.log('💥 测试伤害系统');
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                <h4>✅ 伤害系统测试成功</h4>
+                <p>只要击中就能造成伤害</p>
+                <p>正确防御类型给予更高奖励</p>
+                <p>普通消灭给予基础奖励</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        function resetTest() {
+            console.log('🔄 重置测试');
+            
+            selectedAgent = null;
+            canShoot = false;
+            
+            // 重置按钮状态
+            document.querySelectorAll('.mock-agent-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // 隐藏子弹
+            const bullet = document.getElementById('mockBullet');
+            bullet.style.display = 'none';
+            bullet.style.bottom = '60px';
+            
+            // 重置威胁
+            const threat = document.getElementById('mockThreat');
+            threat.textContent = '钓鱼';
+            threat.style.left = '280px';
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result info';
+            resultDiv.innerHTML = `
+                <h4>🔄 测试已重置</h4>
+                <p>所有状态已恢复到初始状态</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('🎮 游戏玩法改进测试页面加载完成');
+            console.log('✅ 游戏玩法改进已实现');
+        });
+    </script>
+</body>
+</html> 

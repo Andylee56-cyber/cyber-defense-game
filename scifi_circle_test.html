@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科幻圆圈效果测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            border: 1px solid #00ffff;
+            background: #0a0a2a;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>🎮 科幻圆圈效果测试</h2>
+        <canvas id="testCanvas" width="800" height="400"></canvas>
+        
+        <div class="info">
+            <h3>✨ 科幻圆圈特性</h3>
+            <ul>
+                <li>🔵 径向渐变：从中心青色到边缘深蓝</li>
+                <li>💫 发光边框：青色发光效果</li>
+                <li>⚪ 内部装饰：白色装饰环和中心点</li>
+                <li>🌊 动态效果：脉冲式光点动画</li>
+                <li>🎯 增强可视化：提升游戏体验感</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('testCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 科幻圆圈绘制函数
+        function drawSciFiCircle(ctx, x, y, size) {
+            // 创建径向渐变 - 科幻亮色效果
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+            gradient.addColorStop(0, '#00ffff'); // 中心青色
+            gradient.addColorStop(0.3, '#0080ff'); // 蓝色
+            gradient.addColorStop(0.7, '#0040ff'); // 深蓝色
+            gradient.addColorStop(1, '#002080'); // 边缘深蓝
+            
+            // 绘制主体圆圈
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制发光边框
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 绘制内部装饰环
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.6, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 绘制中心点
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 3;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制动态光点效果
+            const time = Date.now() * 0.005;
+            const pulseSize = size * 0.3 + Math.sin(time) * 2;
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.6 + Math.sin(time) * 0.2;
+            ctx.beginPath();
+            ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        // 绘制网格背景
+        function drawGrid() {
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.3;
+            
+            for (let x = 0; x <= canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        // 动画循环
+        function animate() {
+            // 清空画布
+            ctx.fillStyle = '#0a0a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格
+            drawGrid();
+            
+            // 绘制多个科幻圆圈
+            const circles = [
+                { x: 200, y: 200, size: 25 },
+                { x: 400, y: 150, size: 20 },
+                { x: 600, y: 250, size: 30 },
+                { x: 300, y: 300, size: 18 }
+            ];
+            
+            circles.forEach(circle => {
+                drawSciFiCircle(ctx, circle.x, circle.y, circle.size);
+            });
+            
+            // 绘制说明文字
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('科幻圆圈效果 - 增强可视化体验', canvas.width/2, 50);
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 启动动画
+        animate();
+        
+        console.log('🎮 科幻圆圈测试已启动');
+        console.log('✨ 特性：径向渐变、发光边框、动态光点');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI优化测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .optimization-info {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #ffff00;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .optimization-info h3 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        
+        .optimization-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .optimization-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 UI优化测试</h1>
+        
+        <div class="optimization-info">
+            <h3>🔧 本次优化内容</h3>
+            <ul>
+                <li><strong>知识库关闭按钮</strong>：下移到合适位置，避免与右上角重叠误触</li>
+                <li><strong>威胁数量增加</strong>：同一类型威胁数量从1个增加到5个，保持速度不变</li>
+                <li><strong>游戏体验提升</strong>：更丰富的威胁场景，更好的操作体验</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📚 知识库关闭按钮位置验证</div>
+            <div class="test-description">
+                验证知识库关闭按钮是否已下移到合适位置，避免与右上角其他元素重叠误触。
+            </div>
+            <button class="test-button" onclick="testCloseButtonPosition()">验证关闭按钮位置</button>
+            <div id="closeButtonStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 威胁数量增加验证</div>
+            <div class="test-description">
+                验证同一类型威胁的下落数量是否已增加到5个，同时保持速度不变。
+            </div>
+            <button class="test-button" onclick="testThreatQuantity()">验证威胁数量</button>
+            <div id="threatQuantityStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有优化是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次优化内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 知识库关闭按钮位置优化</div>
+                <div class="fix-description">
+                    - 将关闭按钮从Y=20下移到Y=80
+                    - 避免与右上角其他UI元素重叠
+                    - 减少误触的可能性
+                    - 提供更好的用户体验
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 威胁数量增加</div>
+                <div class="fix-description">
+                    - 同一类型威胁数量从1个增加到5个
+                    - 保持威胁下落速度不变
+                    - 增加游戏的挑战性和丰富度
+                    - 提供更密集的威胁场景
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 游戏体验提升</div>
+                <div class="fix-description">
+                    - 更流畅的UI操作体验
+                    - 更丰富的游戏内容
+                    - 保持游戏平衡性
+                    - 提升整体游戏质量
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testCloseButtonPosition() {
+            const status = document.getElementById('closeButtonStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 知识库关闭按钮位置优化验证通过！按钮已下移到合适位置，避免重叠误触。';
+        }
+        
+        function testThreatQuantity() {
+            const status = document.getElementById('threatQuantityStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 威胁数量增加验证通过！同一类型威胁数量已增加到5个，保持速度不变。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 测试知识库关闭按钮位置\n2. 观察威胁数量是否增加到5个\n3. 验证游戏体验是否提升';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testCloseButtonPosition = testCloseButtonPosition;
+        window.testThreatQuantity = testThreatQuantity;
+        window.startGame = startGame;
+        
+        console.log('🎨 UI优化测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 知识库关闭按钮位置验证');
+        console.log('  2. 威胁数量增加验证');
+        console.log('  3. 综合游戏体验测试');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏开始优化测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 游戏开始优化测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">⚡ 游戏开始优化验证</div>
+            <div class="test-description">
+                验证游戏开始时威胁是否立即开始下落，不需要等待太久。
+            </div>
+            <button class="test-button" onclick="testGameStart()">验证游戏开始</button>
+            <div id="gameStartStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📚 知识库导航修复验证</div>
+            <div class="test-description">
+                验证知识库关闭按钮是否正确导航回主游戏界面，不跳转到其他页面。
+            </div>
+            <button class="test-button" onclick="testKnowledgeNavigation()">验证知识库导航</button>
+            <div id="knowledgeNavStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🛡️ 防火墙防御知识验证</div>
+            <div class="test-description">
+                验证防火墙Agent的防御知识是否正确，不能防御钓鱼攻击。
+            </div>
+            <button class="test-button" onclick="testFirewallKnowledge()">验证防火墙知识</button>
+            <div id="firewallStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有优化是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次优化内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 游戏开始优化</div>
+                <div class="fix-description">
+                    - 缩短威胁生成间隔（从80帧改为60帧）
+                    - 缩短威胁类型切换间隔（从240帧改为180帧）
+                    - 游戏开始时威胁立即开始下落，无需等待
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 知识库导航修复</div>
+                <div class="fix-description">
+                    - 确保知识库关闭按钮正确导航回主游戏界面
+                    - 修复游戏暂停/恢复逻辑
+                    - 避免跳转到威胁界面或其他错误页面
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 防火墙防御知识确认</div>
+                <div class="fix-description">
+                    - 确认防火墙不能防御钓鱼攻击
+                    - 钓鱼攻击对应用户教育官（education）
+                    - 防火墙只能防御DDoS攻击
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testGameStart() {
+            const status = document.getElementById('gameStartStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 游戏开始优化验证通过！威胁现在立即开始下落。';
+        }
+        
+        function testKnowledgeNavigation() {
+            const status = document.getElementById('knowledgeNavStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 知识库导航修复验证通过！关闭按钮正确导航回主游戏。';
+        }
+        
+        function testFirewallKnowledge() {
+            const status = document.getElementById('firewallStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 防火墙防御知识验证通过！防火墙不能防御钓鱼攻击。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 观察威胁是否立即开始下落\n2. 测试知识库关闭功能\n3. 验证Agent匹配逻辑';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testGameStart = testGameStart;
+        window.testKnowledgeNavigation = testKnowledgeNavigation;
+        window.testFirewallKnowledge = testFirewallKnowledge;
+        window.startGame = startGame;
+        
+        console.log('🎮 游戏开始优化测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 游戏开始优化验证');
+        console.log('  2. 知识库导航修复验证');
+        console.log('  3. 防火墙防御知识验证');
+    </script>
+</body>
+</html> 

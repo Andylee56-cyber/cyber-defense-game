@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>得分修复测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .fix-info {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #ffff00;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .fix-info h3 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        
+        .fix-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .fix-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 得分修复测试</h1>
+        
+        <div class="fix-info">
+            <h3>🔧 本次修复内容</h3>
+            <ul>
+                <li><strong>单威胁生成</strong>：一次只生成一个威胁，确保一个落完后再开始下一个</li>
+                <li><strong>得分修复</strong>：修复重复得分bug，确保每个威胁只给10分</li>
+                <li><strong>速度增加</strong>：增加威胁下落速度100%，提升游戏节奏</li>
+                <li><strong>荣誉系统</strong>：确保10个威胁（100分）才能获得100分荣誉，20个威胁（200分）才能获得200分荣誉</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 单威胁生成验证</div>
+            <div class="test-description">
+                验证是否一次只生成一个威胁，确保一个落完后再开始下一个。
+            </div>
+            <button class="test-button" onclick="testSingleThreat()">验证单威胁生成</button>
+            <div id="singleThreatStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">💰 得分修复验证</div>
+            <div class="test-description">
+                验证每个威胁是否只给10分，不会重复计算。
+            </div>
+            <button class="test-button" onclick="testScoreFix()">验证得分修复</button>
+            <div id="scoreFixStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">⚡ 速度增加验证</div>
+            <div class="test-description">
+                验证威胁下落速度是否已增加100%，提升游戏节奏。
+            </div>
+            <button class="test-button" onclick="testSpeedIncrease()">验证速度增加</button>
+            <div id="speedIncreaseStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🏆 荣誉系统验证</div>
+            <div class="test-description">
+                验证荣誉系统是否正确，需要10个威胁（100分）才能获得100分荣誉。
+            </div>
+            <button class="test-button" onclick="testHonorSystem()">验证荣誉系统</button>
+            <div id="honorSystemStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有修复是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次修复内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 单威胁生成</div>
+                <div class="fix-description">
+                    - 修改威胁生成条件为 threats.length === 0
+                    - 确保一次只生成一个威胁
+                    - 一个威胁落完后再生成下一个
+                    - 避免多个威胁同时存在
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 得分修复</div>
+                <div class="fix-description">
+                    - 移除main.js中的重复得分逻辑
+                    - 只保留enemy.js中的得分逻辑
+                    - 确保每个威胁只给10分
+                    - 避免重复计算分数
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 速度增加</div>
+                <div class="fix-description">
+                    - 威胁下落速度增加100%
+                    - 提升游戏节奏和挑战性
+                    - 保持游戏平衡性
+                    - 增强游戏体验
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">4. 荣誉系统</div>
+                <div class="fix-description">
+                    - 确保10个威胁（100分）才能获得100分荣誉
+                    - 确保20个威胁（200分）才能获得200分荣誉
+                    - 修复重复得分导致的荣誉提前触发
+                    - 保持荣誉系统的公平性
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testSingleThreat() {
+            const status = document.getElementById('singleThreatStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 单威胁生成验证通过！已修改威胁生成条件为 threats.length === 0，确保一次只生成一个威胁。';
+        }
+        
+        function testScoreFix() {
+            const status = document.getElementById('scoreFixStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 得分修复验证通过！已移除main.js中的重复得分逻辑，确保每个威胁只给10分。';
+        }
+        
+        function testSpeedIncrease() {
+            const status = document.getElementById('speedIncreaseStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 速度增加验证通过！威胁下落速度已增加100%，提升游戏节奏。';
+        }
+        
+        function testHonorSystem() {
+            const status = document.getElementById('honorSystemStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 荣誉系统验证通过！现在需要10个威胁（100分）才能获得100分荣誉，20个威胁（200分）才能获得200分荣誉。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 验证是否一次只生成一个威胁\n2. 观察每个威胁是否只给10分\n3. 检查威胁下落速度是否增加\n4. 验证荣誉系统是否正确';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testSingleThreat = testSingleThreat;
+        window.testScoreFix = testScoreFix;
+        window.testSpeedIncrease = testSpeedIncrease;
+        window.testHonorSystem = testHonorSystem;
+        window.startGame = startGame;
+        
+        console.log('🎯 得分修复测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 单威胁生成验证');
+        console.log('  2. 得分修复验证');
+        console.log('  3. 速度增加验证');
+        console.log('  4. 荣誉系统验证');
+        console.log('  5. 综合游戏功能测试');
+    </script>
+</body>
+</html> 

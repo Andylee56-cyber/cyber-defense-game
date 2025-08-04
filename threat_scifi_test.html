@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>威胁科幻化测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            border: 1px solid #00ffff;
+            background: #0a0a2a;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: 2px solid #00ffff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(45deg, #0080ff, #0040ff);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>🎮 威胁科幻化测试</h2>
+        <canvas id="testCanvas" width="800" height="600"></canvas>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="toggleAnimation()">切换动画</button>
+            <button class="control-btn" onclick="togglePulse()">切换脉冲</button>
+            <button class="control-btn" onclick="toggleGlow()">切换发光</button>
+        </div>
+        
+        <div class="info">
+            <h3>✨ 威胁科幻化特性</h3>
+            <ul>
+                <li>🔺 钓鱼攻击：科幻粉色三角形，发光边框</li>
+                <li>⬜ 恶意软件：科幻橙色正方形，内部装饰</li>
+                <li>⭕ DDoS攻击：科幻青色圆圈，动态光点</li>
+                <li>🔷 数据泄露：科幻紫色菱形，脉冲效果</li>
+                <li>💫 所有威胁：径向渐变、发光效果、动态动画</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('testCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 测试状态
+        let showAnimation = true;
+        let showPulse = true;
+        let showGlow = true;
+        
+        // 威胁配置
+        const threats = [
+            { x: 200, y: 200, type: 'phishing', color: '#ff6b9d', shape: 'triangle', name: '钓鱼攻击' },
+            { x: 400, y: 200, type: 'malware', color: '#ffb366', shape: 'square', name: '恶意软件' },
+            { x: 600, y: 200, type: 'ddos', color: '#66ccff', shape: 'circle', name: 'DDoS攻击' },
+            { x: 300, y: 400, type: 'data_leak', color: '#cc99ff', shape: 'diamond', name: '数据泄露' }
+        ];
+        
+        // 颜色变暗函数
+        function darkenColor(color, factor) {
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            
+            const newR = Math.floor(r * (1 - factor));
+            const newG = Math.floor(g * (1 - factor));
+            const newB = Math.floor(b * (1 - factor));
+            
+            return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+        }
+        
+        // 绘制科幻威胁
+        function drawSciFiThreat(ctx, x, y, size, color, shape) {
+            // 创建径向渐变
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(0.3, darkenColor(color, 0.2));
+            gradient.addColorStop(0.7, darkenColor(color, 0.4));
+            gradient.addColorStop(1, darkenColor(color, 0.6));
+            
+            // 绘制主体形状
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = showGlow ? 15 : 5;
+            
+            switch (shape) {
+                case 'triangle':
+                    drawSciFiTriangle(ctx, x, y, size, color);
+                    break;
+                case 'square':
+                    drawSciFiSquare(ctx, x, y, size, color);
+                    break;
+                case 'circle':
+                    drawSciFiCircle(ctx, x, y, size, color);
+                    break;
+                case 'diamond':
+                    drawSciFiDiamond(ctx, x, y, size, color);
+                    break;
+            }
+            
+            // 绘制动态光点效果
+            if (showPulse) {
+                const time = Date.now() * 0.005;
+                const pulseSize = size * 0.4 + Math.sin(time) * 3;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.7 + Math.sin(time) * 0.2;
+                ctx.beginPath();
+                ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            
+            // 绘制内部装饰环
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 5;
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 绘制中心点
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 3;
+            ctx.globalAlpha = 1;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        // 绘制科幻三角形
+        function drawSciFiTriangle(ctx, x, y, size, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x - size, y + size);
+            ctx.lineTo(x + size, y + size);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = showGlow ? 8 : 3;
+            ctx.stroke();
+            
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y - size * 0.3);
+            ctx.lineTo(x, y + size * 0.3);
+            ctx.stroke();
+        }
+        
+        // 绘制科幻正方形
+        function drawSciFiSquare(ctx, x, y, size, color) {
+            ctx.fillRect(x - size, y - size, size * 2, size * 2);
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = showGlow ? 8 : 3;
+            ctx.strokeRect(x - size, y - size, size * 2, size * 2);
+            
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 3;
+            ctx.beginPath();
+            ctx.moveTo(x - size * 0.5, y);
+            ctx.lineTo(x + size * 0.5, y);
+            ctx.moveTo(x, y - size * 0.5);
+            ctx.lineTo(x, y + size * 0.5);
+            ctx.stroke();
+        }
+        
+        // 绘制科幻圆圈
+        function drawSciFiCircle(ctx, x, y, size, color) {
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = showGlow ? 8 : 3;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
+        // 绘制科幻菱形
+        function drawSciFiDiamond(ctx, x, y, size, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x + size, y);
+            ctx.lineTo(x, y + size);
+            ctx.lineTo(x - size, y);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = showGlow ? 8 : 3;
+            ctx.stroke();
+            
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 3;
+            ctx.beginPath();
+            ctx.moveTo(x - size * 0.5, y);
+            ctx.lineTo(x + size * 0.5, y);
+            ctx.moveTo(x, y - size * 0.5);
+            ctx.lineTo(x, y + size * 0.5);
+            ctx.stroke();
+        }
+        
+        // 绘制网格背景
+        function drawGrid() {
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.3;
+            
+            for (let x = 0; x <= canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        // 绘制威胁名称
+        function drawThreatNames() {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 3;
+            
+            threats.forEach(threat => {
+                ctx.fillText(threat.name, threat.x, threat.y + 50);
+            });
+            
+            ctx.shadowBlur = 0;
+        }
+        
+        // 动画循环
+        function animate() {
+            // 清空画布
+            ctx.fillStyle = '#0a0a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格
+            drawGrid();
+            
+            // 绘制威胁
+            threats.forEach(threat => {
+                drawSciFiThreat(ctx, threat.x, threat.y, 20, threat.color, threat.shape);
+            });
+            
+            // 绘制威胁名称
+            drawThreatNames();
+            
+            // 绘制说明文字
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('威胁科幻化测试 - 四种威胁类型可视化效果', canvas.width/2, 50);
+            
+            if (showAnimation) {
+                requestAnimationFrame(animate);
+            }
+        }
+        
+        // 控制函数
+        function toggleAnimation() {
+            showAnimation = !showAnimation;
+            if (showAnimation) {
+                animate();
+            }
+            console.log('动画状态:', showAnimation);
+        }
+        
+        function togglePulse() {
+            showPulse = !showPulse;
+            console.log('脉冲效果状态:', showPulse);
+        }
+        
+        function toggleGlow() {
+            showGlow = !showGlow;
+            console.log('发光效果状态:', showGlow);
+        }
+        
+        // 启动动画
+        animate();
+        
+        console.log('🎮 威胁科幻化测试已启动');
+        console.log('✨ 特性：四种威胁类型、科幻效果、动态动画');
+    </script>
+</body>
+</html> 

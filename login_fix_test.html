@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录界面修复测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            border: 1px solid #00ffff;
+            background: #0a0a2a;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: 2px solid #00ffff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(45deg, #0080ff, #0040ff);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>🔐 登录界面修复测试</h2>
+        <canvas id="testCanvas" width="400" height="600"></canvas>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="resetLogin()">重置登录</button>
+            <button class="control-btn" onclick="focusUsername()">聚焦用户名</button>
+            <button class="control-btn" onclick="focusPassword()">聚焦密码</button>
+            <button class="control-btn" onclick="testInput()">测试输入</button>
+        </div>
+        
+        <div class="status" id="status">
+            <div>状态: 等待操作...</div>
+        </div>
+        
+        <div class="info">
+            <h3>📋 修复内容</h3>
+            <ul>
+                <li>✅ 调整了标题位置，英文副标题现在在发光框外</li>
+                <li>✅ 扩大了发光框尺寸，确保输入框在框内</li>
+                <li>✅ 修复了输入框坐标检测</li>
+                <li>✅ 改进了键盘输入处理</li>
+                <li>✅ 添加了详细的调试日志</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 模拟微信小游戏环境
+        window.GameGlobal = {
+            canvas: document.getElementById('testCanvas'),
+            main: null
+        };
+        
+        // 状态显示
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            const time = new Date().toLocaleTimeString();
+            status.innerHTML += `<div>[${time}] ${message}</div>`;
+            status.scrollTop = status.scrollHeight;
+        }
+        
+        // 简化的登录界面类
+        class LoginPage {
+            constructor() {
+                this.visible = true;
+                this.username = '';
+                this.password = '';
+                this.currentInput = 'username';
+                this.usernameFocused = false;
+                this.passwordFocused = false;
+                this.bindEvents();
+                updateStatus('登录界面已初始化');
+            }
+
+            bindEvents() {
+                GameGlobal.canvas.addEventListener('click', this.handleClick.bind(this));
+                document.addEventListener('keydown', this.handleKeydown.bind(this));
+            }
+
+            handleClick(e) {
+                const rect = GameGlobal.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                updateStatus(`点击坐标: (${Math.round(x)}, ${Math.round(y)})`);
+                
+                // 检查用户名输入框
+                if (this.isInUsernameInput(x, y)) {
+                    this.currentInput = 'username';
+                    this.usernameFocused = true;
+                    this.passwordFocused = false;
+                    updateStatus('🔍 点击用户名输入框');
+                    return;
+                }
+                
+                // 检查密码输入框
+                if (this.isInPasswordInput(x, y)) {
+                    this.currentInput = 'password';
+                    this.passwordFocused = true;
+                    this.usernameFocused = false;
+                    updateStatus('🔍 点击密码输入框');
+                    return;
+                }
+                
+                // 检查登录按钮
+                if (this.isInLoginButton(x, y)) {
+                    this.handleLogin();
+                    return;
+                }
+                
+                this.usernameFocused = false;
+                this.passwordFocused = false;
+                updateStatus('🔍 点击其他区域');
+            }
+
+            handleKeydown(e) {
+                updateStatus(`⌨️ 键盘事件: ${e.key} (当前输入框: ${this.currentInput})`);
+                
+                if (e.key === 'Enter') {
+                    this.handleLogin();
+                    return;
+                }
+                
+                if (e.key === 'Tab') {
+                    this.currentInput = this.currentInput === 'username' ? 'password' : 'username';
+                    this.usernameFocused = this.currentInput === 'username';
+                    this.passwordFocused = this.currentInput === 'password';
+                    updateStatus(`🔄 切换到输入框: ${this.currentInput}`);
+                    return;
+                }
+                
+                // 处理字符输入
+                if (e.key.length === 1 && e.key.match(/[a-zA-Z0-9]/)) {
+                    if (this.currentInput === 'username') {
+                        this.username += e.key;
+                        updateStatus(`📝 用户名: ${this.username}`);
+                    } else if (this.currentInput === 'password') {
+                        this.password += e.key;
+                        updateStatus(`📝 密码: ${'*'.repeat(this.password.length)}`);
+                    }
+                }
+                
+                // 处理退格键
+                if (e.key === 'Backspace') {
+                    if (this.currentInput === 'username') {
+                        this.username = this.username.slice(0, -1);
+                        updateStatus(`🗑️ 用户名: ${this.username}`);
+                    } else if (this.currentInput === 'password') {
+                        this.password = this.password.slice(0, -1);
+                        updateStatus(`🗑️ 密码: ${'*'.repeat(this.password.length)}`);
+                    }
+                }
+            }
+
+            isInUsernameInput(x, y) {
+                const centerX = GameGlobal.canvas.width / 2;
+                const centerY = GameGlobal.canvas.height / 2 + 30;
+                return x >= centerX - 150 && x <= centerX + 150 &&
+                       y >= centerY - 25 && y <= centerY + 25;
+            }
+
+            isInPasswordInput(x, y) {
+                const centerX = GameGlobal.canvas.width / 2;
+                const centerY = GameGlobal.canvas.height / 2 + 100;
+                return x >= centerX - 150 && x <= centerX + 150 &&
+                       y >= centerY - 25 && y <= centerY + 25;
+            }
+
+            isInLoginButton(x, y) {
+                const centerX = GameGlobal.canvas.width / 2;
+                const centerY = GameGlobal.canvas.height / 2 + 180;
+                return x >= centerX - 100 && x <= centerX + 100 &&
+                       y >= centerY - 25 && y <= centerY + 25;
+            }
+
+            handleLogin() {
+                updateStatus('🔐 尝试登录...');
+                if (this.username === 'user' && this.password === '123') {
+                    updateStatus('✅ 登录成功！');
+                } else {
+                    updateStatus(`❌ 登录失败：用户名=${this.username}, 密码=${this.password}`);
+                }
+            }
+
+            render(ctx) {
+                // 背景
+                ctx.fillStyle = '#0a0a2a';
+                ctx.fillRect(0, 0, GameGlobal.canvas.width, GameGlobal.canvas.height);
+                
+                // 标题
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('网络安全防御系统', GameGlobal.canvas.width/2, 100);
+                
+                ctx.fillStyle = '#00ffff';
+                ctx.font = '12px Arial';
+                ctx.fillText('CYBER SECURITY DEFENSE SYSTEM', GameGlobal.canvas.width/2, 130);
+                
+                // 发光框
+                const centerX = GameGlobal.canvas.width / 2;
+                const centerY = GameGlobal.canvas.height / 2;
+                
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#00ffff';
+                ctx.shadowBlur = 10;
+                
+                const formWidth = 320;
+                const formHeight = 280;
+                const formX = centerX - formWidth / 2;
+                const formY = centerY - formHeight / 2;
+                
+                ctx.fillRect(formX, formY, formWidth, formHeight);
+                ctx.strokeRect(formX, formY, formWidth, formHeight);
+                
+                ctx.shadowBlur = 0;
+                
+                // 输入框
+                this.renderInput(ctx, centerX, centerY + 30, '用户名', this.username, this.usernameFocused);
+                this.renderInput(ctx, centerX, centerY + 100, '密码', '*'.repeat(this.password.length), this.passwordFocused);
+                
+                // 登录按钮
+                this.renderLoginButton(ctx, centerX, centerY + 180);
+            }
+
+            renderInput(ctx, x, y, label, value, focused) {
+                const inputWidth = 200;
+                const inputHeight = 30;
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(label, x - inputWidth / 2, y - 10);
+                
+                ctx.fillStyle = focused ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.3)';
+                ctx.strokeStyle = focused ? '#ffffff' : '#00ffff';
+                ctx.lineWidth = focused ? 2 : 1;
+                
+                ctx.fillRect(x - inputWidth / 2, y - 5, inputWidth, inputHeight);
+                ctx.strokeRect(x - inputWidth / 2, y - 5, inputWidth, inputHeight);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(value, x - inputWidth / 2 + 5, y + 10);
+                
+                if (focused) {
+                    const textWidth = ctx.measureText(value).width;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x - inputWidth / 2 + 5 + textWidth, y);
+                    ctx.lineTo(x - inputWidth / 2 + 5 + textWidth, y + 10);
+                    ctx.stroke();
+                }
+            }
+
+            renderLoginButton(ctx, x, y) {
+                const buttonWidth = 150;
+                const buttonHeight = 40;
+                
+                const gradient = ctx.createLinearGradient(x - buttonWidth / 2, y, x + buttonWidth / 2, y);
+                gradient.addColorStop(0, '#00ffff');
+                gradient.addColorStop(1, '#0080ff');
+                
+                ctx.fillStyle = gradient;
+                ctx.shadowColor = '#00ffff';
+                ctx.shadowBlur = 10;
+                ctx.fillRect(x - buttonWidth / 2, y - buttonHeight / 2, buttonWidth, buttonHeight);
+                ctx.shadowBlur = 0;
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('登录系统', x, y + 5);
+            }
+
+            show() {
+                this.visible = true;
+                this.username = '';
+                this.password = '';
+                this.usernameFocused = false;
+                this.passwordFocused = false;
+                this.currentInput = 'username';
+                updateStatus('🔄 重置登录界面');
+            }
+        }
+
+        // 创建登录界面实例
+        const loginPage = new LoginPage();
+        
+        // 动画循环
+        function animate() {
+            const ctx = GameGlobal.canvas.getContext('2d');
+            ctx.clearRect(0, 0, GameGlobal.canvas.width, GameGlobal.canvas.height);
+            
+            loginPage.render(ctx);
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 启动动画
+        animate();
+        
+        // 控制函数
+        function resetLogin() {
+            loginPage.show();
+        }
+        
+        function focusUsername() {
+            loginPage.currentInput = 'username';
+            loginPage.usernameFocused = true;
+            loginPage.passwordFocused = false;
+            updateStatus('🎯 聚焦用户名输入框');
+        }
+        
+        function focusPassword() {
+            loginPage.currentInput = 'password';
+            loginPage.passwordFocused = true;
+            loginPage.usernameFocused = false;
+            updateStatus('🎯 聚焦密码输入框');
+        }
+        
+        function testInput() {
+            loginPage.username = 'user';
+            loginPage.password = '123';
+            updateStatus('🧪 测试输入: user/123');
+        }
+        
+        updateStatus('🎮 登录界面修复测试已启动');
+        updateStatus('📋 默认登录信息：用户名 user，密码 123');
+    </script>
+</body>
+</html> 

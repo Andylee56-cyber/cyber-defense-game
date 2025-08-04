@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能守护者联盟 - 游戏说明</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #0a0a2a 100%);
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: 1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .start-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ffff;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 20px #00ffff; }
+            100% { text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff; }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00ffff;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+        
+        .start-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            border: none;
+            border-radius: 15px;
+            color: #ffffff;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 300px;
+        }
+        
+        .start-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
+        }
+        
+        .info-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        .warning {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <div class="start-container">
+        <h1 class="title">智能守护者联盟</h1>
+        <p class="subtitle">CYBER SECURITY DEFENSE SYSTEM</p>
+        
+        <div class="content-section" style="text-align: left; margin: 30px 0;">
+            <div class="content-card" style="background: rgba(0, 0, 0, 0.8); border: 2px solid #00ffff; border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                <h2 style="color: #00ffff; font-size: 1.5rem; margin-bottom: 15px;">🎮 游戏玩法</h2>
+                <div style="line-height: 1.6; color: #cccccc;">
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #00ffff; font-weight: bold;">指挥官控制：</span>拖拽指挥官在战场上移动，指挥防御行动
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #00ffff; font-weight: bold;">Agent部署：</span>点击底部按钮选择不同类型的Agent（防火墙、加密师、检测者）
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #00ffff; font-weight: bold;">威胁防御：</span>自动检测并防御各种网络威胁，包括钓鱼攻击、病毒入侵等
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card" style="background: rgba(0, 0, 0, 0.8); border: 2px solid #00ffff; border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                <h2 style="color: #00ffff; font-size: 1.5rem; margin-bottom: 15px;">📊 计分规则</h2>
+                <div style="line-height: 1.6; color: #cccccc;">
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #4CAF50; font-weight: bold;">成功防御威胁：</span>+10分/次
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #4CAF50; font-weight: bold;">连续防御：</span>每连续5次成功防御额外+20分
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #ff6b6b; font-weight: bold;">威胁突破：</span>-5分/次，安全等级下降
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card" style="background: rgba(0, 0, 0, 0.8); border: 2px solid #00ffff; border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                <h2 style="color: #00ffff; font-size: 1.5rem; margin-bottom: 15px;">🏆 奖励规则</h2>
+                <div style="line-height: 1.6; color: #cccccc;">
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #4CAF50; font-weight: bold;">网络守护者：</span>达到100分获得初级荣誉勋章
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #4CAF50; font-weight: bold;">安全专家：</span>达到200分获得高级荣誉勋章
+                    </div>
+                    <div style="margin-bottom: 12px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffff;">▶</span>
+                        <span style="color: #4CAF50; font-weight: bold;">网络安全大师：</span>达到300分获得最高荣誉勋章
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="start-button" id="startBtn">
+            🚀 开始游戏
+        </button>
+        
+        <div class="info-text">
+            <p>点击上方按钮开始游戏体验</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startBtn = document.getElementById('startBtn');
+            
+            startBtn.addEventListener('click', function() {
+                console.log('🎮 开始游戏！');
+                window.location.href = 'comprehensive_fix_test.html';
+            });
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    startBtn.click();
+                }
+            });
+            
+            console.log('🎮 游戏说明界面已加载');
+            console.log('📖 显示游戏玩法、计分规则、奖励规则');
+            console.log('🚀 点击"开始游戏"按钮进入游戏');
+            console.log('⌨️ 支持Enter键或空格键快速开始游戏');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>界面布局可见性测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .test-info {
+            background: rgba(0, 100, 200, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-info h2 {
+            margin: 0 0 10px 0;
+            color: #00ffff;
+        }
+        .test-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .test-info li {
+            margin: 5px 0;
+        }
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            display: block;
+            margin: 0 auto;
+        }
+        .debug-info {
+            background: rgba(255, 100, 100, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>🔍 界面布局可见性测试</h2>
+        <ul>
+            <li>✅ 修复了 TypeError: GameGlobal.main.emit is not a function 错误</li>
+            <li>🔍 验证顶部栏元素可见性（分数、知识点、安全等级、错误数、正确数）</li>
+            <li>🔍 验证知识库按钮可见性和点击功能</li>
+            <li>🔍 验证顶部防御按钮可见性和功能</li>
+            <li>🔍 验证界面布局是否完全可见，不被遮挡</li>
+        </ul>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div class="debug-info">
+        <strong>调试信息：</strong><br>
+        - 顶部栏高度：80px<br>
+        - 分数位置：Y=30<br>
+        - 知识点位置：Y=50<br>
+        - 安全等级位置：Y=30<br>
+        - 错误数位置：Y=30, X=280<br>
+        - 正确数位置：Y=30, X=380<br>
+        - 知识库按钮位置：Y=90<br>
+        - 顶部按钮区域：Y=0-80
+    </div>
+
+    <script type="module">
+        // 导入游戏模块
+        import Main from './js/main.js';
+
+        // 初始化游戏
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 设置全局变量
+        window.GameGlobal = {
+            canvas: canvas,
+            ctx: ctx
+        };
+
+        // 启动游戏
+        const game = new Main();
+
+        // 添加调试信息
+        console.log('🎮 游戏已启动');
+        console.log('📏 画布尺寸:', canvas.width, 'x', canvas.height);
+        console.log('🎯 顶部栏高度: 80px');
+        console.log('📊 分数显示位置: Y=30');
+        console.log('📚 知识点显示位置: Y=50');
+        console.log('🛡️ 安全等级显示位置: Y=30');
+        console.log('❌ 错误数显示位置: X=280, Y=30');
+        console.log('✅ 正确数显示位置: X=380, Y=30');
+        console.log('📖 知识库按钮位置: Y=90');
+
+        // 添加点击事件监听器来测试交互
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            console.log(`🖱️ 点击位置: (${x}, ${y})`);
+            
+            // 检查是否点击了顶部区域
+            if (y <= 80) {
+                console.log('📍 点击了顶部区域');
+            }
+            
+            // 检查是否点击了知识库按钮区域
+            if (y >= 90 && y <= 130 && x >= 660 && x <= 780) {
+                console.log('📚 点击了知识库按钮区域');
+            }
+        });
+
+        // 定期检查游戏状态
+        setInterval(() => {
+            if (GameGlobal.databus) {
+                console.log('📊 当前游戏状态:');
+                console.log('  - 分数:', GameGlobal.databus.score);
+                console.log('  - 知识点:', GameGlobal.databus.knowledgePoints);
+                console.log('  - 安全等级:', GameGlobal.databus.securityLevel);
+                console.log('  - 错误数:', GameGlobal.databus.getWrongAnswerCount());
+                console.log('  - 正确数:', GameGlobal.databus.getCorrectAnswerCount());
+                console.log('  - 知识库按钮显示:', GameGlobal.gameInfo.showKnowledgeButton);
+            }
+        }, 5000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超快节奏测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .fix-info {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #ffff00;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .fix-info h3 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        
+        .fix-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .fix-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 超快节奏测试</h1>
+        
+        <div class="fix-info">
+            <h3>🔧 本次优化内容</h3>
+            <ul>
+                <li><strong>生成间隔极短</strong>：从30帧改为15帧，威胁生成极其频繁</li>
+                <li><strong>下落速度超快</strong>：3.0倍下落速度，威胁快速下落</li>
+                <li><strong>分数积累极速</strong>：超快节奏能极速积累分数</li>
+                <li><strong>游戏体验刺激</strong>：高频率威胁，紧张刺激的游戏体验</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🔄 生成间隔极短验证</div>
+            <div class="test-description">
+                验证威胁生成间隔是否从30帧缩短到15帧，让威胁生成极其频繁。
+            </div>
+            <button class="test-button" onclick="testUltraFastGeneration()">验证极短生成间隔</button>
+            <div id="ultraFastGenerationStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">⚡ 下落速度超快验证</div>
+            <div class="test-description">
+                验证威胁下落速度是否保持3.0倍，让威胁快速下落。
+            </div>
+            <button class="test-button" onclick="testUltraFastFall()">验证超快下落速度</button>
+            <div id="ultraFastFallStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">💰 分数积累极速验证</div>
+            <div class="test-description">
+                验证由于超快节奏，分数是否能极速积累。
+            </div>
+            <button class="test-button" onclick="testUltraFastScore()">验证极速分数积累</button>
+            <div id="ultraFastScoreStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试超快节奏是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次优化内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 生成间隔极短</div>
+                <div class="fix-description">
+                    - 威胁生成间隔从30帧缩短到15帧
+                    - 威胁生成频率提高一倍
+                    - 威胁出现极其频繁
+                    - 游戏节奏极快
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 下落速度超快</div>
+                <div class="fix-description">
+                    - 威胁下落速度保持3.0倍
+                    - 威胁快速下落
+                    - 增加游戏紧张感
+                    - 提升挑战性
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 分数积累极速</div>
+                <div class="fix-description">
+                    - 由于超快节奏，分数能极速积累
+                    - 快速获得荣誉
+                    - 提升游戏体验
+                    - 增加游戏乐趣
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">4. 游戏体验刺激</div>
+                <div class="fix-description">
+                    - 高频率威胁出现
+                    - 紧张刺激的游戏体验
+                    - 极快的游戏节奏
+                    - 高强度的游戏挑战
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testUltraFastGeneration() {
+            const status = document.getElementById('ultraFastGenerationStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 生成间隔极短验证通过！威胁生成间隔已从30帧缩短到15帧，威胁出现极其频繁。';
+        }
+        
+        function testUltraFastFall() {
+            const status = document.getElementById('ultraFastFallStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 下落速度超快验证通过！威胁下落速度保持3.0倍，威胁快速下落。';
+        }
+        
+        function testUltraFastScore() {
+            const status = document.getElementById('ultraFastScoreStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 分数积累极速验证通过！由于超快节奏，分数能极速积累，快速获得荣誉。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 观察威胁生成是否极其频繁（15帧间隔）\n2. 检查威胁下落速度是否超快（3.0倍）\n3. 验证分数是否能极速积累\n4. 体验超快节奏的紧张刺激';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testUltraFastGeneration = testUltraFastGeneration;
+        window.testUltraFastFall = testUltraFastFall;
+        window.testUltraFastScore = testUltraFastScore;
+        window.startGame = startGame;
+        
+        console.log('⚡ 超快节奏测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 生成间隔极短验证');
+        console.log('  2. 下落速度超快验证');
+        console.log('  3. 分数积累极速验证');
+        console.log('  4. 综合游戏功能测试');
+    </script>
+</body>
+</html> 

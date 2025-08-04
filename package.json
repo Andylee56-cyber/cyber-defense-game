@@ -1,0 +1,21 @@
+{
+  "name": "cyber-security-defense-game",
+  "version": "1.0.0",
+  "description": "智能守护者联盟 - 网络安全防御游戏",
+  "main": "game.js",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -c-1",
+    "dev": "npx http-server . -p 8080 -c-1 --cors"
+  },
+  "keywords": [
+    "game",
+    "cyber-security",
+    "defense",
+    "agents"
+  ],
+  "author": "Game Developer",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+} 

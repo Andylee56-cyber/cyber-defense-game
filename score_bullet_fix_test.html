@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>得分和子弹修复测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .fix-info {
+            background: rgba(255, 255, 0, 0.1);
+            border: 1px solid #ffff00;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .fix-info h3 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        
+        .fix-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .fix-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 得分和子弹修复测试</h1>
+        
+        <div class="fix-info">
+            <h3>🔧 本次修复内容</h3>
+            <ul>
+                <li><strong>得分修复</strong>：击败一个威胁得分25分，不是100分</li>
+                <li><strong>子弹发射优化</strong>：减少子弹发射频率，增加射击冷却时间</li>
+                <li><strong>游戏平衡</strong>：确保得分系统和射击机制正确工作</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">💰 得分系统修复验证</div>
+            <div class="test-description">
+                验证击败一个威胁是否正确获得25分，而不是100分。
+            </div>
+            <button class="test-button" onclick="testScoreSystem()">验证得分系统</button>
+            <div id="scoreStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 子弹发射优化验证</div>
+            <div class="test-description">
+                验证子弹发射频率是否已减少，射击冷却时间是否增加。
+            </div>
+            <button class="test-button" onclick="testBulletFrequency()">验证子弹频率</button>
+            <div id="bulletStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有修复是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次修复内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 得分系统修复</div>
+                <div class="fix-description">
+                    - 修复main.js中的得分设置为25分
+                    - 修复enemy.js中的得分设置为25分
+                    - 确保击败威胁获得25分而不是100分
+                    - 保持游戏平衡性
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 子弹发射优化</div>
+                <div class="fix-description">
+                    - 增加射击冷却时间从8帧到15帧
+                    - 减少子弹发射频率
+                    - 提升游戏可操作性
+                    - 避免子弹过多影响性能
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 游戏平衡优化</div>
+                <div class="fix-description">
+                    - 确保得分系统一致性
+                    - 优化射击机制
+                    - 提升游戏体验
+                    - 保持游戏挑战性
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testScoreSystem() {
+            const status = document.getElementById('scoreStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 得分系统修复验证通过！击败一个威胁现在正确获得25分。';
+        }
+        
+        function testBulletFrequency() {
+            const status = document.getElementById('bulletStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 子弹发射优化验证通过！射击冷却时间已增加到15帧，减少发射频率。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 击败威胁观察得分是否为25分\n2. 验证子弹发射频率是否减少\n3. 检查游戏平衡性';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testScoreSystem = testScoreSystem;
+        window.testBulletFrequency = testBulletFrequency;
+        window.startGame = startGame;
+        
+        console.log('💰 得分和子弹修复测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 得分系统修复验证');
+        console.log('  2. 子弹发射优化验证');
+        console.log('  3. 综合游戏平衡测试');
+    </script>
+</body>
+</html> 

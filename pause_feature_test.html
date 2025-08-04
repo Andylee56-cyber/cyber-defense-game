@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏暂停功能测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        .test-section {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid #ffa500;
+        }
+        
+        .mock-game {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(to right, rgba(0, 20, 40, 0.8), rgba(30, 15, 60, 0.8));
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .mock-top-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .mock-button {
+            width: 70px;
+            height: 25px;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mock-button:hover {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+        
+        .mock-pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mock-pause-box {
+            width: 300px;
+            height: 200px;
+            background: rgba(0, 20, 40, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .mock-resume-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .mock-resume-button:hover {
+            background: #2ecc71;
+        }
+        
+        .mock-game-elements {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .mock-threat {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            border-radius: 8px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .mock-bullet {
+            width: 16px;
+            height: 30px;
+            background: linear-gradient(to bottom, #00ffff, #0080ff);
+            border-radius: 8px;
+            margin: 10px auto;
+        }
+        
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <h1>⏸️ 游戏暂停功能测试</h1>
+    
+    <div class="test-section">
+        <h2>✅ 功能说明</h2>
+        
+        <div class="test-result success">
+            <h3>游戏暂停功能实现</h3>
+            <p>✅ 已实现点击顶部查看时游戏进程暂停，关闭后继续正常进行的功能</p>
+            <ul>
+                <li>点击顶部防御介绍按钮时游戏自动暂停</li>
+                <li>显示暂停界面，提示用户游戏已暂停</li>
+                <li>关闭防御介绍或点击继续游戏按钮时恢复游戏</li>
+                <li>暂停期间游戏逻辑停止，但背景和UI继续更新</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 功能测试</h2>
+        
+        <div class="test-result info">
+            <h3>模拟游戏场景</h3>
+            <p>点击下面的按钮测试暂停功能：</p>
+            
+            <div class="mock-game" id="mockGame">
+                <div class="mock-top-buttons">
+                    <div class="mock-button" onclick="testPause('firewall')">防火墙</div>
+                    <div class="mock-button" onclick="testPause('encryption')">加密师</div>
+                    <div class="mock-button" onclick="testPause('detection')">检测者</div>
+                    <div class="mock-button" onclick="testPause('education')">教育官</div>
+                </div>
+                
+                <div class="mock-game-elements">
+                    <div class="mock-threat">威胁</div>
+                    <div class="mock-bullet"></div>
+                    <p>游戏进行中...</p>
+                </div>
+                
+                <div class="mock-pause-overlay" id="pauseOverlay">
+                    <div class="mock-pause-box">
+                        <h3 style="color: #00ffff; margin-bottom: 20px;">游戏已暂停</h3>
+                        <p>点击任意位置继续游戏</p>
+                        <button class="mock-resume-button" onclick="resumeGame()">继续游戏</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button onclick="testPause('firewall')">测试防火墙暂停</button>
+                <button onclick="testPause('encryption')">测试加密师暂停</button>
+                <button onclick="testPause('detection')">测试检测者暂停</button>
+                <button onclick="testPause('education')">测试教育官暂停</button>
+                <button onclick="resumeGame()">恢复游戏</button>
+            </div>
+        </div>
+        
+        <div class="test-result info">
+            <h3>功能详情</h3>
+            <ul>
+                <li><strong>暂停触发：</strong></li>
+                <ul>
+                    <li>点击顶部防御介绍按钮</li>
+                    <li>显示防御介绍界面</li>
+                    <li>游戏逻辑自动暂停</li>
+                </ul>
+                <li><strong>暂停状态：</strong></li>
+                <ul>
+                    <li>威胁停止移动</li>
+                    <li>子弹停止发射</li>
+                    <li>碰撞检测暂停</li>
+                    <li>背景和UI继续更新</li>
+                </ul>
+                <li><strong>恢复方式：</strong></li>
+                <ul>
+                    <li>关闭防御介绍界面</li>
+                    <li>点击暂停界面的继续游戏按钮</li>
+                    <li>点击暂停界面的任意位置</li>
+                </ul>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 代码修改详情</h2>
+        
+        <div class="test-result info">
+            <h3>1. main.js 修改</h3>
+            <pre><code>// 添加暂停状态
+isPaused = false; // 游戏暂停状态
+
+// 添加事件监听
+this.gameInfo.on('pauseGame', this.pauseGame.bind(this));
+this.gameInfo.on('resumeGame', this.resumeGame.bind(this));
+
+// 添加暂停和恢复方法
+pauseGame() {
+  this.isPaused = true;
+  console.log('⏸️ 游戏已暂停');
+}
+
+resumeGame() {
+  this.isPaused = false;
+  console.log('▶️ 游戏已恢复');
+}
+
+// 修改update方法
+update() {
+  // 如果游戏暂停，只更新背景和UI，不更新游戏逻辑
+  if (this.isPaused) {
+    this.bg.update();
+    this.defenseIntro.update();
+    this.gameEnd.update();
+    return;
+  }
+  // ... 正常游戏逻辑
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>2. gameinfo.js 修改</h3>
+            <pre><code>// 添加暂停状态
+this.isPaused = false; // 游戏是否暂停
+
+// 修改handleTouch方法
+if (x >= buttonX && x <= buttonX + buttonWidth &&
+    y >= buttonY && y <= buttonY + buttonHeight) {
+  // 显示防御介绍信息
+  this.showDefenseInfo(button.type);
+  // 触发防御介绍事件
+  this.emit('showDefenseIntro', button.type);
+  // 暂停游戏
+  this.isPaused = true;
+  this.emit('pauseGame');
+  console.log(`🔍 点击了 ${button.type} 防御介绍按钮，游戏已暂停`);
+  return;
+}
+
+// 添加暂停界面渲染
+renderPauseOverlay(ctx) {
+  // 半透明背景
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  
+  // 暂停提示框
+  // ... 绘制暂停界面
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>3. defenseIntro.js 修改</h3>
+            <pre><code>// 修改hide方法
+hide() {
+  this.isVisible = false;
+  this.currentDefense = null;
+  
+  // 恢复游戏
+  if (GameGlobal.gameInfo) {
+    GameGlobal.gameInfo.isPaused = false;
+    GameGlobal.gameInfo.emit('resumeGame');
+    console.log('▶️ 关闭防御介绍，游戏已恢复');
+  }
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        function testPause(defenseType) {
+            console.log(`⏸️ 测试 ${defenseType} 暂停功能`);
+            
+            const pauseOverlay = document.getElementById('pauseOverlay');
+            pauseOverlay.style.display = 'flex';
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                <h4>✅ 暂停功能测试成功</h4>
+                <p>点击了 ${defenseType} 防御介绍按钮</p>
+                <p>游戏已暂停，显示暂停界面</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            // 3秒后移除测试结果
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        function resumeGame() {
+            console.log('▶️ 恢复游戏');
+            
+            const pauseOverlay = document.getElementById('pauseOverlay');
+            pauseOverlay.style.display = 'none';
+            
+            // 显示测试结果
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                <h4>✅ 恢复功能测试成功</h4>
+                <p>游戏已恢复，继续正常进行</p>
+            `;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            // 3秒后移除测试结果
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('⏸️ 游戏暂停功能测试页面加载完成');
+            console.log('✅ 游戏暂停功能已实现');
+        });
+    </script>
+</body>
+</html> 

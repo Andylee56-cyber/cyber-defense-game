@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简化登录测试</title>
+    <style>
+        body {
+            background: #0a0a2a;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .login-box {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #00ffff;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #00ffff;
+            color: #0a0a2a;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background: #ffffff;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>网络安全防御系统</h1>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名" autocomplete="off">
+            </div>
+            
+            <div class="input-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" placeholder="请输入密码" autocomplete="off">
+            </div>
+            
+            <button type="submit">登录系统</button>
+        </form>
+        
+        <div id="status"></div>
+        
+        <div style="margin-top: 20px; font-size: 14px; color: #00ffff;">
+            测试账号: user / 123
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const status = document.getElementById('status');
+        
+        // 添加输入事件监听
+        document.getElementById('username').addEventListener('input', function(e) {
+            console.log('用户名输入:', e.target.value);
+        });
+        
+        document.getElementById('password').addEventListener('input', function(e) {
+            console.log('密码输入:', e.target.value);
+        });
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            console.log('提交登录:', username, password);
+            
+            if (username === 'user' && password === '123') {
+                status.innerHTML = '<div class="success">✅ 登录成功！正在跳转...</div>';
+                console.log('登录成功');
+                
+                setTimeout(() => {
+                    window.location.href = 'main.html';
+                }, 1000);
+            } else {
+                status.innerHTML = '<div class="error">❌ 用户名或密码错误</div>';
+                console.log('登录失败');
+            }
+        });
+        
+        console.log('简化登录页面已加载');
+    </script>
+</body>
+</html> 

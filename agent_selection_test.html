@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent选择和威胁控制测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        .test-section {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid #ffa500;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+        
+        .mock-game {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(to right, rgba(0, 20, 40, 0.8), rgba(30, 15, 60, 0.8));
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .mock-commander {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .mock-threat {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            animation: fall 8s linear infinite;
+        }
+        
+        @keyframes fall {
+            from { top: -50px; }
+            to { top: 350px; }
+        }
+        
+        .mock-agent-buttons {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .mock-agent-button {
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(to bottom, #27ae60, #2ecc71);
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mock-agent-button:hover {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            transform: scale(1.05);
+        }
+        
+        .mock-agent-button.selected {
+            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.8);
+        }
+        
+        .mock-agent-button.correct {
+            background: linear-gradient(to bottom, #00ff00, #00cc00);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        }
+        
+        .mock-agent-button.wrong {
+            background: linear-gradient(to bottom, #ff0000, #cc0000);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        }
+        
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #2ecc71;
+        }
+        
+        .feature-list {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .status-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Agent选择和威胁控制测试</h1>
+    
+    <div class="test-section">
+        <h2>✅ 功能说明</h2>
+        
+        <div class="test-result success">
+            <h3>改进功能</h3>
+            <p>✅ 已实现以下改进：</p>
+            <ul>
+                <li><strong>Agent切换：</strong>可以随时切换Agent类型</li>
+                <li><strong>威胁类型控制：</strong>一次只生成一种类型的威胁</li>
+                <li><strong>正确Agent验证：</strong>只有选择正确的Agent才能射击</li>
+                <li><strong>知识库记录：</strong>消灭或错误时自动记录知识点</li>
+                <li><strong>布局优化：</strong>错误和正确数量显示位置优化</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 功能测试</h2>
+        
+        <div class="test-result info">
+            <h3>模拟游戏场景</h3>
+            <p>点击下面的按钮测试Agent选择和威胁控制功能：</p>
+            
+            <div class="mock-game" id="mockGame">
+                <div class="status-display" id="statusDisplay">
+                    <div>当前威胁: <span id="currentThreat">无</span></div>
+                    <div>选择Agent: <span id="selectedAgent">无</span></div>
+                    <div>射击状态: <span id="shootStatus">不可射击</span></div>
+                </div>
+                
+                <div class="mock-threat" id="mockThreat" style="left: 280px; display: none;">钓鱼</div>
+                <div class="mock-commander">指挥官</div>
+                
+                <div class="mock-agent-buttons">
+                    <div class="mock-agent-button" onclick="selectAgent('firewall')">防火墙</div>
+                    <div class="mock-agent-button" onclick="selectAgent('encryption')">加密师</div>
+                    <div class="mock-agent-button" onclick="selectAgent('detection')">检测者</div>
+                    <div class="mock-agent-button" onclick="selectAgent('education')">教育官</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button onclick="generateThreat()">生成威胁</button>
+                <button onclick="testShooting()">测试射击</button>
+                <button onclick="testAgentSwitch()">测试Agent切换</button>
+                <button onclick="testKnowledgeRecord()">测试知识记录</button>
+                <button onclick="resetTest()">重置测试</button>
+            </div>
+        </div>
+        
+        <div class="test-result info">
+            <h3>改进详情</h3>
+            <div class="feature-list">
+                <strong>1. Agent切换功能：</strong><br>
+                - 可以随时切换Agent类型<br>
+                - 切换时显示选择提示<br>
+                - 支持动态验证<br><br>
+                
+                <strong>2. 威胁类型控制：</strong><br>
+                - 一次只生成一种类型的威胁<br>
+                - 威胁类型与Agent类型对应<br>
+                - 威胁生成频率控制<br><br>
+                
+                <strong>3. 正确Agent验证：</strong><br>
+                - 只有选择正确的Agent才能射击<br>
+                - 错误选择时显示提示信息<br>
+                - 实时验证Agent类型匹配<br><br>
+                
+                <strong>4. 知识库记录：</strong><br>
+                - 消灭威胁时记录知识点<br>
+                - 错误防御时记录错误信息<br>
+                - 知识库按钮实时更新<br><br>
+                
+                <strong>5. 布局优化：</strong><br>
+                - 错误和正确数量显示位置优化<br>
+                - 避免被按钮遮挡<br>
+                - 更好的视觉布局
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 代码修改详情</h2>
+        
+        <div class="test-result info">
+            <h3>1. js/player/index.js 修改</h3>
+            <pre><code>// 修改Agent选择逻辑
+handleAgentSelection(agentType) {
+  // 允许随时切换Agent类型
+  this.selectedAgentType = agentType;
+  console.log(`🎯 切换到 ${agentType} Agent类型`);
+}
+
+// 修改射击验证逻辑
+shoot() {
+  // 检查是否选择了正确的Agent类型
+  const currentThreat = GameGlobal.databus.threats[0];
+  const correctAgentType = this.getCorrectAgentType(currentThreat.category);
+  
+  if (this.selectedAgentType !== correctAgentType) {
+    console.log(`❌ 当前威胁需要 ${correctAgentType} 类型Agent`);
+    return;
+  }
+  // ... 射击逻辑
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>2. js/main.js 修改</h3>
+            <pre><code>// 修改威胁生成逻辑
+threatGenerate() {
+  // 限制同时存在的威胁数量为1
+  if (GameGlobal.databus.threats.length < 1) {
+    const threat = GameGlobal.databus.pool.getItemByClass('threat', Threat);
+    
+    // 控制威胁类型，一段时间内只生成一种类型
+    const threatTypes = ['phishing', 'malware', 'ddos', 'data_leak'];
+    const currentThreatType = threatTypes[Math.floor(GameGlobal.databus.frame / 600) % threatTypes.length];
+    
+    threat.init({ type: currentThreatType });
+    GameGlobal.databus.addThreat(threat);
+    
+    // 设置当前威胁类型
+    GameGlobal.databus.currentThreatType = currentThreatType;
+  }
+}</code></pre>
+        </div>
+        
+        <div class="test-result info">
+            <h3>3. js/runtime/gameinfo.js 修改</h3>
+            <pre><code>// 修改知识库按钮显示逻辑
+updateGameInfo() {
+  // 检查是否有新的知识点记录
+  if (GameGlobal.databus.knowledgeRecords && GameGlobal.databus.knowledgeRecords.length > 0) {
+    this.showKnowledgeButton = true;
+  }
+}
+
+// 优化布局
+renderTopBar(ctx) {
+  // 调整错误和正确数量显示位置
+  ctx.fillText(`错误: ${wrongCount}`, 280, 25);
+  ctx.fillText(`正确: ${correctCount}`, 380, 25);
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        let selectedAgent = null;
+        let currentThreat = null;
+        let knowledgeRecords = [];
+        
+        const threatAgentMapping = {
+            'phishing': 'firewall',
+            'malware': 'detection',
+            'ddos': 'encryption',
+            'data_leak': 'education'
+        };
+        
+        const threatNames = {
+            'phishing': '钓鱼攻击',
+            'malware': '恶意软件',
+            'ddos': 'DDoS攻击',
+            'data_leak': '数据泄露'
+        };
+        
+        const agentNames = {
+            'firewall': '防火墙守护者',
+            'encryption': '数据加密师',
+            'detection': '威胁检测者',
+            'education': '安全教育官'
+        };
+        
+        function selectAgent(agentType) {
+            selectedAgent = agentType;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.mock-agent-button').forEach(btn => {
+                btn.classList.remove('selected', 'correct', 'wrong');
+            });
+            event.target.classList.add('selected');
+            
+            // 检查是否正确选择
+            if (currentThreat) {
+                const correctAgent = threatAgentMapping[currentThreat];
+                if (agentType === correctAgent) {
+                    event.target.classList.add('correct');
+                } else {
+                    event.target.classList.add('wrong');
+                }
+            }
+            
+            updateStatus();
+            console.log(`🎯 选择了 ${agentNames[agentType]} Agent`);
+        }
+        
+        function generateThreat() {
+            const threatTypes = ['phishing', 'malware', 'ddos', 'data_leak'];
+            currentThreat = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+            
+            const threat = document.getElementById('mockThreat');
+            threat.textContent = threatNames[currentThreat];
+            threat.style.display = 'block';
+            threat.style.left = (Math.random() * 500 + 50) + 'px';
+            
+            // 重置按钮状态
+            document.querySelectorAll('.mock-agent-button').forEach(btn => {
+                btn.classList.remove('correct', 'wrong');
+            });
+            
+            updateStatus();
+            console.log(`🔄 生成威胁: ${threatNames[currentThreat]}`);
+        }
+        
+        function testShooting() {
+            if (!selectedAgent) {
+                showResult('warning', '请先选择Agent类型');
+                return;
+            }
+            
+            if (!currentThreat) {
+                showResult('warning', '当前没有威胁需要防御');
+                return;
+            }
+            
+            const correctAgent = threatAgentMapping[currentThreat];
+            if (selectedAgent !== correctAgent) {
+                showResult('error', `当前威胁需要 ${agentNames[correctAgent]}，请切换Agent类型`);
+                return;
+            }
+            
+            showResult('success', `✅ 成功射击！使用 ${agentNames[selectedAgent]} 防御 ${threatNames[currentThreat]}`);
+            
+            // 记录知识点
+            const record = {
+                id: Date.now(),
+                point: `成功使用${agentNames[selectedAgent]}防御${threatNames[currentThreat]}`,
+                timestamp: new Date().toLocaleString(),
+                type: 'success'
+            };
+            knowledgeRecords.push(record);
+            
+            // 清除威胁
+            setTimeout(() => {
+                document.getElementById('mockThreat').style.display = 'none';
+                currentThreat = null;
+                updateStatus();
+            }, 1000);
+        }
+        
+        function testAgentSwitch() {
+            if (!currentThreat) {
+                showResult('warning', '请先生成威胁');
+                return;
+            }
+            
+            const correctAgent = threatAgentMapping[currentThreat];
+            const wrongAgents = Object.keys(threatAgentMapping).filter(agent => agent !== correctAgent);
+            const randomWrongAgent = wrongAgents[Math.floor(Math.random() * wrongAgents.length)];
+            
+            selectAgent(randomWrongAgent);
+            showResult('warning', `切换到错误的Agent: ${agentNames[randomWrongAgent]}`);
+            
+            // 记录错误
+            const record = {
+                id: Date.now(),
+                point: `错误使用${agentNames[randomWrongAgent]}防御${threatNames[currentThreat]}`,
+                timestamp: new Date().toLocaleString(),
+                type: 'error',
+                threatName: threatNames[currentThreat],
+                wrongDefense: agentNames[randomWrongAgent],
+                correctDefense: agentNames[correctAgent]
+            };
+            knowledgeRecords.push(record);
+        }
+        
+        function testKnowledgeRecord() {
+            console.log('📚 知识记录:', knowledgeRecords);
+            showResult('info', `当前有 ${knowledgeRecords.length} 条知识记录`);
+        }
+        
+        function resetTest() {
+            selectedAgent = null;
+            currentThreat = null;
+            knowledgeRecords = [];
+            
+            // 重置按钮状态
+            document.querySelectorAll('.mock-agent-button').forEach(btn => {
+                btn.classList.remove('selected', 'correct', 'wrong');
+            });
+            
+            // 隐藏威胁
+            document.getElementById('mockThreat').style.display = 'none';
+            
+            updateStatus();
+            showResult('info', '测试已重置');
+        }
+        
+        function updateStatus() {
+            document.getElementById('currentThreat').textContent = currentThreat ? threatNames[currentThreat] : '无';
+            document.getElementById('selectedAgent').textContent = selectedAgent ? agentNames[selectedAgent] : '无';
+            
+            let shootStatus = '不可射击';
+            if (selectedAgent && currentThreat) {
+                const correctAgent = threatAgentMapping[currentThreat];
+                if (selectedAgent === correctAgent) {
+                    shootStatus = '可以射击';
+                } else {
+                    shootStatus = 'Agent类型错误';
+                }
+            }
+            document.getElementById('shootStatus').textContent = shootStatus;
+        }
+        
+        function showResult(type, message) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `<h4>${message}</h4>`;
+            
+            document.querySelector('.test-section:nth-child(2)').appendChild(resultDiv);
+            
+            setTimeout(() => {
+                resultDiv.remove();
+            }, 3000);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('🎯 Agent选择和威胁控制测试页面加载完成');
+            updateStatus();
+        });
+    </script>
+</body>
+</html> 

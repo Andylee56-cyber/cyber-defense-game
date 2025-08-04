@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试 - 游戏玩法说明界面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .test-title {
+            color: #00ffff;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .info-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #00ffff;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🎮 游戏玩法说明界面测试</h1>
+        
+        <div class="info-box">
+            <h3>📋 测试说明</h3>
+            <p>这个页面用于测试游戏玩法说明界面是否正常工作。</p>
+            <p>点击下面的按钮可以访问不同的界面：</p>
+        </div>
+        
+        <button class="test-button" onclick="window.location.href='gameplay_intro.html'">
+            🎮 打开游戏玩法说明界面
+        </button>
+        
+        <button class="test-button" onclick="window.location.href='main.html'">
+            🏠 打开主界面
+        </button>
+        
+        <button class="test-button" onclick="window.location.href='comprehensive_fix_test.html'">
+            🎯 直接开始游戏
+        </button>
+        
+        <div class="info-box">
+            <h3>🔧 导航流程</h3>
+            <p><strong>正常流程：</strong></p>
+            <ol>
+                <li>打开 <code>index.html</code>（启动页面）</li>
+                <li>自动跳转到 <code>main.html</code>（主界面）</li>
+                <li>点击"游戏玩法"按钮 → <code>gameplay_intro.html</code></li>
+                <li>点击"开始游戏"按钮 → <code>comprehensive_fix_test.html</code></li>
+            </ol>
+            
+            <p><strong>快速测试：</strong></p>
+            <ul>
+                <li>直接点击上面的按钮进行测试</li>
+                <li>检查控制台是否有错误信息</li>
+                <li>验证页面跳转是否正常</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h3>📊 当前状态</h3>
+            <p>✅ 游戏玩法说明界面已创建</p>
+            <p>✅ 主界面按钮已配置</p>
+            <p>✅ 导航流程已设置</p>
+            <p>🔍 请测试各个按钮是否正常工作</p>
+        </div>
+    </div>
+    
+    <script>
+        console.log('🧪 游戏玩法说明界面测试页面已加载');
+        console.log('📖 可以测试以下功能：');
+        console.log('  - 游戏玩法说明界面');
+        console.log('  - 主界面导航');
+        console.log('  - 直接游戏启动');
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') {
+                window.location.href = 'gameplay_intro.html';
+            } else if (e.key === '2') {
+                window.location.href = 'main.html';
+            } else if (e.key === '3') {
+                window.location.href = 'comprehensive_fix_test.html';
+            }
+        });
+        
+        console.log('⌨️ 键盘快捷键：');
+        console.log('  - 按 1 键：打开游戏玩法说明界面');
+        console.log('  - 按 2 键：打开主界面');
+        console.log('  - 按 3 键：直接开始游戏');
+    </script>
+</body>
+</html> 

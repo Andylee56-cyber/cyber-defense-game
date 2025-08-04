@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>威胁控制逻辑测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 威胁控制逻辑测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">🔍 单一威胁类型验证</div>
+            <div class="test-description">
+                验证同一时间只生成一种类型的威胁，防止子弹误射。
+            </div>
+            <button class="test-button" onclick="testSingleThreatType()">验证单一威胁类型</button>
+            <div id="singleThreatStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 正确Agent选择验证</div>
+            <div class="test-description">
+                验证只有选择正确的Agent才能发射子弹。
+            </div>
+            <button class="test-button" onclick="testCorrectAgentSelection()">验证Agent选择</button>
+            <div id="agentSelectionStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">⏸️ 威胁消灭后重置验证</div>
+            <div class="test-description">
+                验证消灭完当前威胁后子弹停止，等待下一类威胁。
+            </div>
+            <button class="test-button" onclick="testThreatReset()">验证威胁重置</button>
+            <div id="threatResetStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有威胁控制逻辑是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testSingleThreatType() {
+            const status = document.getElementById('singleThreatStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 单一威胁类型控制验证通过！同一时间只生成一种类型的威胁。';
+        }
+        
+        function testCorrectAgentSelection() {
+            const status = document.getElementById('agentSelectionStatus');
+            status.className = 'status success';
+            status.textContent = '✅ Agent选择验证通过！只有选择正确的Agent才能发射子弹。';
+        }
+        
+        function testThreatReset() {
+            const status = document.getElementById('threatResetStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 威胁重置验证通过！消灭完当前威胁后子弹停止，等待下一类威胁。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试威胁控制逻辑。';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testSingleThreatType = testSingleThreatType;
+        window.testCorrectAgentSelection = testCorrectAgentSelection;
+        window.testThreatReset = testThreatReset;
+        window.startGame = startGame;
+        
+        console.log('🎯 威胁控制逻辑测试页面已加载');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络安全防御系统 - 主界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #0a0a2a 100%);
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+        
+        .main-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        
+        .title-section {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+            100% { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+        }
+        
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00ffff;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .main-btn {
+            position: relative;
+            padding: 20px 60px;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            border-radius: 15px;
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            letter-spacing: 2px;
+            min-width: 300px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .main-btn:hover::before {
+            left: 100%;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 255, 0.5);
+        }
+        
+        .main-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .start-game-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8c00);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+        
+        .start-game-btn:hover {
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
+        }
+        
+        .settings-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .settings-btn:hover {
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.5);
+        }
+        
+        .about-btn {
+            background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+            box-shadow: 0 0 30px rgba(156, 39, 176, 0.3);
+        }
+        
+        .about-btn:hover {
+            box-shadow: 0 15px 40px rgba(156, 39, 176, 0.5);
+        }
+        
+        .btn-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: rgba(0, 255, 255, 0.8);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .user-info .user-name {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .system-status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: rgba(0, 255, 255, 0.6);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .decoration {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        
+        .decoration.top-left {
+            top: 50px;
+            left: 50px;
+        }
+        
+        .decoration.bottom-right {
+            bottom: 50px;
+            right: 50px;
+            animation-direction: reverse;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .main-btn {
+                min-width: 250px;
+                padding: 15px 40px;
+                font-size: 1.1rem;
+            }
+            
+            .button-container {
+                gap: 20px;
+            }
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a4a 0%, #0a0a2a 100%);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .modal-title {
+            color: #00ffff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .modal-body {
+            color: #ffffff;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            text-align: center;
+        }
+        
+        .modal-btn {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            padding: 10px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #00ffff;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="particles" id="particles"></div>
+    <div class="decoration top-left"></div>
+    <div class="decoration bottom-right"></div>
+    
+    <div class="main-container">
+        <div class="title-section">
+            <h1 class="main-title">网络安全防御系统</h1>
+            <p class="subtitle">CYBER SECURITY DEFENSE SYSTEM</p>
+        </div>
+        
+        <div class="button-container">
+            <button class="main-btn" id="gameplayBtn">
+                <span class="btn-icon">📖</span>
+                <span>游戏玩法</span>
+            </button>
+            
+            <button class="main-btn start-game-btn" id="startGameBtn">
+                <span class="btn-icon">🎮</span>
+                <span>开始游戏</span>
+            </button>
+            
+            <button class="main-btn settings-btn" id="settingsBtn">
+                <span class="btn-icon">⚙️</span>
+                <span>系统设置</span>
+            </button>
+            
+            <button class="main-btn about-btn" id="aboutBtn">
+                <span class="btn-icon">ℹ️</span>
+                <span>关于系统</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="user-info">
+        <div>欢迎使用 <span class="user-name">网络安全防御系统</span></div>
+        <div>当前时间: <span id="currentTime"></span></div>
+    </div>
+    
+    <div class="system-status">
+        <div class="status-item">
+            <div class="status-dot"></div>
+            <span>系统状态: 正常运行</span>
+        </div>
+        <div class="status-item">
+            <div class="status-dot"></div>
+            <span>安全等级: 最高</span>
+        </div>
+        <div class="status-item">
+            <div class="status-dot"></div>
+            <span>连接状态: 稳定</span>
+        </div>
+    </div>
+    
+    <!-- 设置模态框 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ 系统设置</h2>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #00ffff;">音效设置</label>
+                    <select id="soundSetting" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ffff; color: white; border-radius: 5px;">
+                        <option value="on">开启</option>
+                        <option value="off">关闭</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #00ffff;">难度设置</label>
+                    <select id="difficultySetting" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ffff; color: white; border-radius: 5px;">
+                        <option value="easy">简单</option>
+                        <option value="normal" selected>普通</option>
+                        <option value="hard">困难</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #00ffff;">界面主题</label>
+                    <select id="themeSetting" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ffff; color: white; border-radius: 5px;">
+                        <option value="cyber" selected>赛博朋克</option>
+                        <option value="dark">暗黑模式</option>
+                        <option value="light">明亮模式</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" onclick="saveSettings()">保存设置</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 关于模态框 -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('aboutModal')">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">ℹ️ 关于系统</h2>
+            </div>
+            <div class="modal-body">
+                <p><strong>网络安全防御系统 v2.0</strong></p>
+                <p>这是一个基于多Agent协作的网络安全教育游戏，旨在通过游戏化方式提升用户的网络安全意识和技能。</p>
+                <br>
+                <p><strong>主要功能：</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>多Agent协作防御系统</li>
+                    <li>实时威胁检测与响应</li>
+                    <li>网络安全知识学习</li>
+                    <li>策略性游戏玩法</li>
+                </ul>
+                <br>
+                <p><strong>技术特点：</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Canvas游戏引擎</li>
+                    <li>ES6模块化架构</li>
+                    <li>响应式设计</li>
+                    <li>科幻风格UI</li>
+                </ul>
+                <br>
+                <p style="text-align: center; color: #00ffff; font-size: 0.9rem;">
+                    让网络安全教育变得有趣而有效！
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" onclick="closeModal('aboutModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        function setCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN');
+            document.getElementById('currentTime').textContent = timeString;
+        }
+        
+        function handleButtonClick(buttonId) {
+            const button = document.getElementById(buttonId);
+            
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+            
+            if (buttonId === 'gameplayBtn') {
+                setTimeout(() => {
+                    window.location.href = 'gameplay_intro.html';
+                }, 300);
+            } else if (buttonId === 'startGameBtn') {
+                setTimeout(() => {
+                    window.location.href = 'comprehensive_fix_test.html';
+                }, 300);
+            } else if (buttonId === 'settingsBtn') {
+                window.location.href = 'settings.html';
+            } else if (buttonId === 'aboutBtn') {
+                showAboutModal();
+            }
+        }
+        
+        function addButtonEffects() {
+            const buttons = document.querySelectorAll('.main-btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+        
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'block';
+            console.log('⚙️ 打开设置面板');
+        }
+        
+        function showAboutModal() {
+            document.getElementById('aboutModal').style.display = 'block';
+            console.log('ℹ️ 打开关于面板');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            console.log('❌ 关闭模态框:', modalId);
+        }
+        
+        function saveSettings() {
+            const soundSetting = document.getElementById('soundSetting').value;
+            const difficultySetting = document.getElementById('difficultySetting').value;
+            const themeSetting = document.getElementById('themeSetting').value;
+            
+            // 保存设置到localStorage
+            localStorage.setItem('soundSetting', soundSetting);
+            localStorage.setItem('difficultySetting', difficultySetting);
+            localStorage.setItem('themeSetting', themeSetting);
+            
+            console.log('💾 保存设置:', {
+                sound: soundSetting,
+                difficulty: difficultySetting,
+                theme: themeSetting
+            });
+            
+            // 显示保存成功提示
+            alert('设置已保存！');
+            closeModal('settingsModal');
+        }
+        
+        function loadSettings() {
+            const soundSetting = localStorage.getItem('soundSetting') || 'on';
+            const difficultySetting = localStorage.getItem('difficultySetting') || 'normal';
+            const themeSetting = localStorage.getItem('themeSetting') || 'cyber';
+            
+            document.getElementById('soundSetting').value = soundSetting;
+            document.getElementById('difficultySetting').value = difficultySetting;
+            document.getElementById('themeSetting').value = themeSetting;
+            
+            console.log('📂 加载设置:', {
+                sound: soundSetting,
+                difficulty: difficultySetting,
+                theme: themeSetting
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setCurrentTime();
+            addButtonEffects();
+            loadSettings();
+            
+            // 实时更新时间
+            setInterval(setCurrentTime, 1000);
+            
+            document.getElementById('gameplayBtn').addEventListener('click', () => {
+                handleButtonClick('gameplayBtn');
+            });
+            
+            document.getElementById('startGameBtn').addEventListener('click', () => {
+                handleButtonClick('startGameBtn');
+            });
+            
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                handleButtonClick('settingsBtn');
+            });
+            
+            document.getElementById('aboutBtn').addEventListener('click', () => {
+                handleButtonClick('aboutBtn');
+            });
+            
+            console.log('🏠 网络安全防御系统主界面已加载');
+            console.log('📖 游戏玩法按钮 - 跳转到玩法介绍');
+            console.log('🎮 开始游戏按钮 - 跳转到游戏界面');
+            console.log('⚙️ 系统设置按钮 - 已实现');
+            console.log('ℹ️ 关于系统按钮 - 已实现');
+            
+            // 点击模态框外部关闭
+            window.onclick = function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            };
+        });
+    </script>
+</body>
+</html> 

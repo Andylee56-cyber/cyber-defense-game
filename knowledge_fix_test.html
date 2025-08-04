@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库修复测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .test-info {
+            background: rgba(0, 100, 200, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-info h2 {
+            margin: 0 0 10px 0;
+            color: #00ffff;
+        }
+        .test-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .test-info li {
+            margin: 5px 0;
+        }
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            display: block;
+            margin: 0 auto;
+        }
+        .debug-info {
+            background: rgba(255, 100, 100, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .status {
+            background: rgba(0, 200, 100, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>📚 知识库修复测试</h2>
+        <ul>
+            <li>✅ 修复了知识库页面触摸事件处理</li>
+            <li>✅ 添加了测试知识记录</li>
+            <li>🔍 验证知识库页面显示内容</li>
+            <li>🔍 验证关闭按钮功能</li>
+            <li>🔍 验证知识记录统计</li>
+        </ul>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div class="debug-info">
+        <strong>调试信息：</strong><br>
+        - 知识库按钮位置：Y=90<br>
+        - 关闭按钮位置：右上角<br>
+        - 测试知识记录：4条知识点 + 2条错误记录<br>
+        - 触摸事件处理：已集成到Commander
+    </div>
+
+    <div class="status" id="status">
+        <strong>测试状态：</strong><br>
+        - 游戏状态：启动中...<br>
+        - 知识记录：检查中...<br>
+        - 关闭按钮：待验证<br>
+        - 页面跳转：待验证
+    </div>
+
+    <script type="module">
+        // 导入游戏模块
+        import Main from './js/main.js';
+
+        // 初始化游戏
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 设置全局变量
+        window.GameGlobal = {
+            canvas: canvas,
+            ctx: ctx
+        };
+
+        // 启动游戏
+        const game = new Main();
+
+        // 更新状态显示
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            if (GameGlobal.databus) {
+                const records = GameGlobal.databus.knowledgeRecords || [];
+                const wrongCount = GameGlobal.databus.getWrongAnswerCount();
+                const correctCount = GameGlobal.databus.getCorrectAnswerCount();
+                
+                statusDiv.innerHTML = `
+                    <strong>测试状态：</strong><br>
+                    - 游戏状态：运行中<br>
+                    - 知识记录：${records.length} 条<br>
+                    - 错误记录：${wrongCount} 条<br>
+                    - 正确记录：${correctCount} 条<br>
+                    - 知识库页面：${GameGlobal.knowledgePage ? '已集成' : '未集成'}<br>
+                    - 知识库按钮：${GameGlobal.gameInfo.showKnowledgeButton ? '显示' : '隐藏'}
+                `;
+            }
+        }
+
+        // 添加调试信息
+        console.log('🎮 游戏已启动');
+        console.log('📚 知识库修复测试开始');
+
+        // 添加点击事件监听器来测试交互
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            console.log(`🖱️ 点击位置: (${x}, ${y})`);
+            
+            // 检查是否点击了知识库按钮区域
+            if (y >= 90 && y <= 130 && x >= 660 && x <= 780) {
+                console.log('📚 点击了知识库按钮区域');
+            }
+            
+            // 检查是否点击了知识库页面的关闭按钮区域
+            if (GameGlobal.knowledgePage && GameGlobal.knowledgePage.isVisible) {
+                const closeButtonX = 800 - 120 - 20; // SCREEN_WIDTH - buttonWidth - 20
+                const closeButtonY = 20;
+                if (x >= closeButtonX && x <= closeButtonX + 120 && 
+                    y >= closeButtonY && y <= closeButtonY + 40) {
+                    console.log('❌ 点击了知识库关闭按钮区域');
+                }
+            }
+        });
+
+        // 定期检查游戏状态
+        setInterval(() => {
+            updateStatus();
+            
+            if (GameGlobal.databus) {
+                const records = GameGlobal.databus.knowledgeRecords || [];
+                console.log('📊 知识库状态:');
+                console.log('  - 知识记录数量:', records.length);
+                console.log('  - 错误记录数量:', GameGlobal.databus.getWrongAnswerCount());
+                console.log('  - 正确记录数量:', GameGlobal.databus.getCorrectAnswerCount());
+                console.log('  - 知识库页面集成:', !!GameGlobal.knowledgePage);
+                console.log('  - 知识库按钮显示:', GameGlobal.gameInfo.showKnowledgeButton);
+                
+                if (records.length > 0) {
+                    console.log('📝 知识记录示例:');
+                    records.slice(0, 3).forEach((record, index) => {
+                        console.log(`   记录 ${index + 1}: ${record.type} - ${record.point}`);
+                    });
+                }
+            }
+        }, 3000);
+
+        // 测试知识库功能
+        setTimeout(() => {
+            console.log('🧪 测试知识库功能...');
+            if (GameGlobal.gameInfo && GameGlobal.gameInfo.showKnowledgeBase) {
+                console.log('✅ 知识库方法存在');
+            } else {
+                console.log('❌ 知识库方法不存在');
+            }
+            
+            if (GameGlobal.knowledgePage) {
+                console.log('✅ 知识库页面已集成');
+                console.log('✅ 知识库页面触摸处理已添加');
+            } else {
+                console.log('❌ 知识库页面未集成');
+            }
+        }, 2000);
+
+        // 测试知识记录
+        setTimeout(() => {
+            console.log('📚 测试知识记录...');
+            if (GameGlobal.databus) {
+                const records = GameGlobal.databus.knowledgeRecords || [];
+                console.log(`📖 知识记录数量: ${records.length}`);
+                
+                if (records.length === 0) {
+                    console.log('⚠️ 没有知识记录，可能需要手动添加');
+                    // 手动添加一些测试记录
+                    GameGlobal.databus.addTestKnowledgeRecords();
+                } else {
+                    console.log('✅ 知识记录正常');
+                }
+            }
+        }, 4000);
+    </script>
+</body>
+</html> 

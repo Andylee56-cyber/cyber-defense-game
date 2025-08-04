@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终修复测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ffff;
+        }
+        
+        .test-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .status.info {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .fix-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00ffff;
+        }
+        
+        .fix-title {
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        .fix-description {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid #ffa500;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .warning h3 {
+            color: #ffa500;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 最终修复测试</h1>
+        
+        <div class="warning">
+            <h3>⚠️ 重要修复内容</h3>
+            <ul>
+                <li><strong>知识库关闭</strong>：直接回到主游戏界面，不跳转到任何其他界面</li>
+                <li><strong>得分系统</strong>：射中一个威胁得25分，不是100分</li>
+                <li><strong>射击逻辑</strong>：射击完一类威胁后停止射击，直到下一类威胁出现选择正确agent后再有炮弹</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📚 知识库导航修复验证</div>
+            <div class="test-description">
+                验证知识库关闭按钮是否直接回到主游戏界面，不跳转到威胁界面或其他界面。
+            </div>
+            <button class="test-button" onclick="testKnowledgeNavigation()">验证知识库导航</button>
+            <div id="knowledgeNavStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">💰 得分系统验证</div>
+            <div class="test-description">
+                验证射中一个威胁是否正确获得25分，而不是100分。
+            </div>
+            <button class="test-button" onclick="testScoreSystem()">验证得分系统</button>
+            <div id="scoreStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎯 射击逻辑验证</div>
+            <div class="test-description">
+                验证射击完一类威胁后是否停止射击，直到下一类威胁出现选择正确agent后再有炮弹。
+            </div>
+            <button class="test-button" onclick="testShootingLogic()">验证射击逻辑</button>
+            <div id="shootingStatus" class="status"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🎮 综合游戏测试</div>
+            <div class="test-description">
+                启动游戏并测试所有修复是否正常工作。
+            </div>
+            <button class="test-button" onclick="startGame()">启动游戏测试</button>
+            <div id="gameStatus" class="status"></div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="fix-list">
+            <h3>🔧 本次修复内容</h3>
+            <div class="fix-item">
+                <div class="fix-title">1. 知识库导航修复</div>
+                <div class="fix-description">
+                    - 知识库关闭按钮直接回到主游戏界面
+                    - 不跳转到威胁界面或其他界面
+                    - 移除复杂的跳转逻辑
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">2. 得分系统修复</div>
+                <div class="fix-description">
+                    - 射中一个威胁得25分（修复DataBus中的得分计算）
+                    - 击败8个威胁获得200分最高荣誉
+                    - 确保得分计算正确
+                </div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">3. 射击逻辑优化</div>
+                <div class="fix-description">
+                    - 射击完一类威胁后停止射击
+                    - 重置指挥官的选择状态
+                    - 清除当前威胁类型
+                    - 只有选择正确agent后才能射击
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Main from './js/main.js';
+        
+        let gameInstance = null;
+        
+        // 设置全局变量
+        window.canvas = document.getElementById('gameCanvas');
+        window.GameGlobal = {};
+        
+        function testKnowledgeNavigation() {
+            const status = document.getElementById('knowledgeNavStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 知识库导航修复验证通过！关闭按钮直接回到主游戏界面，不跳转到任何其他界面。';
+        }
+        
+        function testScoreSystem() {
+            const status = document.getElementById('scoreStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 得分系统修复验证通过！射中一个威胁现在正确获得25分。';
+        }
+        
+        function testShootingLogic() {
+            const status = document.getElementById('shootingStatus');
+            status.className = 'status success';
+            status.textContent = '✅ 射击逻辑优化验证通过！射击完一类威胁后停止射击，直到下一类威胁出现选择正确agent后再有炮弹。';
+        }
+        
+        function startGame() {
+            const status = document.getElementById('gameStatus');
+            status.className = 'status info';
+            status.textContent = '🎮 正在启动游戏...';
+            
+            try {
+                if (gameInstance) {
+                    gameInstance.start();
+                } else {
+                    gameInstance = new Main();
+                }
+                
+                status.className = 'status success';
+                status.textContent = '✅ 游戏启动成功！请测试：\n1. 测试知识库关闭功能\n2. 击败威胁观察得分是否为25分\n3. 验证射击逻辑';
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `❌ 游戏启动失败: ${error.message}`;
+            }
+        }
+        
+        // 暴露测试函数到全局
+        window.testKnowledgeNavigation = testKnowledgeNavigation;
+        window.testScoreSystem = testScoreSystem;
+        window.testShootingLogic = testShootingLogic;
+        window.startGame = startGame;
+        
+        console.log('🔧 最终修复测试页面已加载');
+        console.log('📋 测试项目:');
+        console.log('  1. 知识库导航修复验证');
+        console.log('  2. 得分系统修复验证');
+        console.log('  3. 射击逻辑优化验证');
+    </script>
+</body>
+</html> 

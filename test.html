@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能守护者联盟 - 测试页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .game-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00ffff;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00ffff;
+        }
+        
+        .button {
+            background: #0080ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .button:hover {
+            background: #0060cc;
+        }
+        
+        .button:active {
+            background: #004080;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <div class="game-info">
+        <h3>智能守护者联盟</h3>
+        <p>状态: <span id="gameStatus">运行中</span></p>
+        <p>分数: <span id="score">0</span></p>
+        <p>安全等级: <span id="securityLevel">100</span>%</p>
+        <p>知识点: <span id="knowledgePoints">0</span></p>
+    </div>
+    
+    <div class="controls">
+        <h4>控制说明</h4>
+        <p>• 拖拽指挥官移动</p>
+        <p>• 点击底部按钮选择Agent</p>
+        <p>• 点击屏幕部署Agent</p>
+        <p>• 自动防御威胁</p>
+        <button class="button" onclick="restartGame()">重新开始</button>
+        <button class="button" onclick="togglePause()">暂停/继续</button>
+    </div>
+
+    <script>
+        // 模拟微信小程序环境
+        window.wx = {
+            createInnerAudioContext: function() {
+                return {
+                    src: '',
+                    loop: false,
+                    volume: 1,
+                    play: function() { console.log('播放音频'); },
+                    stop: function() { console.log('停止音频'); },
+                    destroy: function() { console.log('销毁音频'); }
+                };
+            },
+            onTouchStart: function(callback) { console.log('注册触摸开始事件'); },
+            onTouchMove: function(callback) { console.log('注册触摸移动事件'); },
+            onTouchEnd: function(callback) { console.log('注册触摸结束事件'); },
+            vibrateShort: function() { console.log('震动'); }
+        };
+
+        // 模拟canvas
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 模拟GameGlobal
+        window.GameGlobal = {
+            databus: null,
+            musicManager: null,
+            gameInfo: null,
+            commander: null
+        };
+
+        // 模拟window.innerWidth和innerHeight
+        Object.defineProperty(window, 'innerWidth', {
+            get: function() { return 800; }
+        });
+        Object.defineProperty(window, 'innerHeight', {
+            get: function() { return 600; }
+        });
+
+        // 加载游戏模块
+        let gameInstance = null;
+        let isPaused = false;
+
+        // 动态加载游戏脚本
+        function loadGame() {
+            // 这里需要根据实际的文件结构调整路径
+            console.log('游戏加载中...');
+            
+            // 模拟游戏启动
+            setTimeout(() => {
+                console.log('游戏启动成功！');
+                document.getElementById('gameStatus').textContent = '运行中';
+            }, 1000);
+        }
+
+        function restartGame() {
+            console.log('重新开始游戏');
+            document.getElementById('score').textContent = '0';
+            document.getElementById('securityLevel').textContent = '100';
+            document.getElementById('knowledgePoints').textContent = '0';
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            console.log(isPaused ? '游戏暂停' : '游戏继续');
+            document.getElementById('gameStatus').textContent = isPaused ? '已暂停' : '运行中';
+        }
+
+        // 页面加载完成后启动游戏
+        window.addEventListener('load', function() {
+            console.log('页面加载完成，启动游戏...');
+            loadGame();
+        });
+
+        // 添加触摸事件支持
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            console.log('触摸开始:', e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            console.log('触摸结束');
+        });
+
+        // 添加鼠标事件支持（用于桌面测试）
+        canvas.addEventListener('mousedown', function(e) {
+            console.log('鼠标按下:', e.clientX, e.clientY);
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (e.buttons > 0) {
+                console.log('鼠标拖拽:', e.clientX, e.clientY);
+            }
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            console.log('鼠标释放');
+        });
+
+        // 模拟游戏循环
+        function gameLoop() {
+            // 清空画布
+            ctx.fillStyle = '#0a0a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制网格背景
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.3;
+            
+            for (let x = 0; x <= canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            ctx.globalAlpha = 1;
+
+            // 绘制测试文本
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('智能守护者联盟 - 测试模式', canvas.width/2, canvas.height/2);
+            ctx.font = '14px Arial';
+            ctx.fillText('请使用微信开发者工具运行完整游戏', canvas.width/2, canvas.height/2 + 30);
+
+            // 继续循环
+            if (!isPaused) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // 启动游戏循环
+        gameLoop();
+    </script>
+</body>
+</html> 

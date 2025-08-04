@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录界面移除测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a2a;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        
+        #gameCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .test-info {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        
+        .status {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        
+        .success {
+            color: #00ff00;
+        }
+        
+        .error {
+            color: #ff0000;
+        }
+        
+        .info {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>🔐 登录界面移除测试</h2>
+        <p><strong>测试目标：</strong>验证游戏启动时不再显示登录界面，直接进入游戏</p>
+        <p><strong>修改内容：</strong></p>
+        <ul>
+            <li>修改 js/main.js 构造函数，设置 gameStarted = true</li>
+            <li>直接调用 this.start() 启动游戏</li>
+            <li>移除登录界面的渲染和更新逻辑</li>
+        </ul>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div class="status" id="status">
+        <strong>测试状态：</strong><br>
+        - 游戏状态：启动中...<br>
+        - 登录界面：检查中...<br>
+        - 游戏界面：检查中...<br>
+        - 功能验证：待测试
+    </div>
+
+    <script type="module">
+        // 导入游戏模块
+        import Main from './js/main.js';
+
+        // 初始化游戏
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 设置全局变量
+        window.GameGlobal = {
+            canvas: canvas,
+            ctx: ctx
+        };
+
+        // 启动游戏
+        const game = new Main();
+
+        // 更新状态显示
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            
+            if (GameGlobal.databus) {
+                const loginVisible = GameGlobal.loginPage && GameGlobal.loginPage.visible;
+                const gameStarted = GameGlobal.main && GameGlobal.main.gameStarted;
+                
+                statusDiv.innerHTML = `
+                    <strong>测试状态：</strong><br>
+                    <span class="${gameStarted ? 'success' : 'error'}">- 游戏状态：${gameStarted ? '已启动' : '未启动'}</span><br>
+                    <span class="${!loginVisible ? 'success' : 'error'}">- 登录界面：${loginVisible ? '显示中' : '已隐藏'}</span><br>
+                    <span class="${gameStarted ? 'success' : 'error'}">- 游戏界面：${gameStarted ? '已显示' : '未显示'}</span><br>
+                    <span class="info">- 分数：${GameGlobal.databus.score}</span><br>
+                    <span class="info">- 安全等级：${GameGlobal.databus.securityLevel}%</span><br>
+                    <span class="info">- 知识点：${GameGlobal.databus.knowledgePoints}</span><br>
+                    <span class="info">- 威胁数量：${GameGlobal.databus.threats.length}</span><br>
+                    <span class="info">- 子弹数量：${GameGlobal.databus.bullets.length}</span>
+                `;
+            }
+        }
+
+        // 添加调试信息
+        console.log('🔐 登录界面移除测试开始');
+        console.log('🎮 游戏已启动');
+        console.log('📏 画布尺寸:', canvas.width, 'x', canvas.height);
+
+        // 检查登录界面状态
+        setTimeout(() => {
+            console.log('🔍 检查登录界面状态...');
+            if (GameGlobal.loginPage) {
+                console.log('📋 登录界面对象存在:', GameGlobal.loginPage);
+                console.log('👁️ 登录界面可见性:', GameGlobal.loginPage.visible);
+            } else {
+                console.log('❌ 登录界面对象不存在');
+            }
+            
+            if (GameGlobal.main) {
+                console.log('🎮 主游戏对象存在:', GameGlobal.main);
+                console.log('🚀 游戏启动状态:', GameGlobal.main.gameStarted);
+            } else {
+                console.log('❌ 主游戏对象不存在');
+            }
+        }, 1000);
+
+        // 定期检查游戏状态
+        setInterval(() => {
+            updateStatus();
+            
+            if (GameGlobal.databus) {
+                console.log('📊 当前游戏状态:');
+                console.log('  - 分数:', GameGlobal.databus.score);
+                console.log('  - 知识点:', GameGlobal.databus.knowledgePoints);
+                console.log('  - 安全等级:', GameGlobal.databus.securityLevel);
+                console.log('  - 威胁数量:', GameGlobal.databus.threats.length);
+                console.log('  - 子弹数量:', GameGlobal.databus.bullets.length);
+                
+                if (GameGlobal.loginPage) {
+                    console.log('  - 登录界面可见:', GameGlobal.loginPage.visible);
+                }
+                
+                if (GameGlobal.main) {
+                    console.log('  - 游戏启动状态:', GameGlobal.main.gameStarted);
+                }
+            }
+        }, 2000);
+
+        // 测试结果验证
+        setTimeout(() => {
+            console.log('✅ 测试结果验证:');
+            
+            const loginVisible = GameGlobal.loginPage && GameGlobal.loginPage.visible;
+            const gameStarted = GameGlobal.main && GameGlobal.main.gameStarted;
+            const hasThreats = GameGlobal.databus && GameGlobal.databus.threats.length > 0;
+            
+            if (!loginVisible && gameStarted) {
+                console.log('🎉 测试通过！登录界面已成功移除，游戏直接启动');
+                document.getElementById('status').innerHTML += '<br><span class="success">🎉 测试通过！登录界面已成功移除</span>';
+            } else {
+                console.log('❌ 测试失败！登录界面仍然显示或游戏未启动');
+                document.getElementById('status').innerHTML += '<br><span class="error">❌ 测试失败！登录界面仍然显示</span>';
+            }
+            
+            if (hasThreats) {
+                console.log('🎯 游戏正常运行，威胁已生成');
+            } else {
+                console.log('⚠️ 游戏可能未正常运行，没有威胁生成');
+            }
+        }, 5000);
+    </script>
+</body>
+</html> 
