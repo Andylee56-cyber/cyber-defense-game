@@ -45,21 +45,76 @@
     <button class="back-button" onclick="goBack()">返回主菜单</button>
 
     <script type="module">
+        // 导入游戏模块
         import Main from './js/main.js';
-        
+
+        // 初始化游戏
         const canvas = document.getElementById('gameCanvas');
-        window.canvas = canvas;
-        window.GameGlobal = {};
-        
+        const ctx = canvas.getContext('2d');
+
+        // 设置全局变量
+        window.GameGlobal = {
+            canvas: canvas,
+            ctx: ctx
+        };
+
+        // 启动游戏
         const game = new Main();
-        
+
         function goBack() {
             window.location.href = 'main.html';
         }
         
         window.goBack = goBack;
-        
+
+        // 添加调试信息
         console.log('🎮 游戏已启动');
+        console.log('📏 画布尺寸:', canvas.width, 'x', canvas.height);
+        console.log('🎯 顶部栏高度: 80px');
+        console.log('📊 分数显示位置: Y=30');
+        console.log('📚 知识点显示位置: Y=50');
+        console.log('🛡️ 安全等级显示位置: Y=30');
+        console.log('❌ 错误数显示位置: X=280, Y=30');
+        console.log('✅ 正确数显示位置: X=380, Y=30');
+        console.log('📖 知识库按钮位置: Y=90');
+
+        // 添加点击事件监听器来测试交互
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            console.log(`🖱️ 点击位置: (${x}, ${y})`);
+            
+            // 检查是否点击了顶部区域
+            if (y <= 80) {
+                console.log('📍 点击了顶部区域');
+            }
+            
+            // 检查是否点击了知识库按钮区域
+            if (y >= 90 && y <= 130 && x >= 660 && x <= 780) {
+                console.log('📚 点击了知识库按钮区域');
+            }
+
+            // 检查是否点击了底部Agent选择区域
+            if (y >= 500 && y <= 600) {
+                console.log('🎯 点击了底部Agent选择区域');
+            }
+        });
+
+        // 定期检查游戏状态
+        setInterval(() => {
+            if (GameGlobal.databus) {
+                console.log('📊 当前游戏状态:');
+                console.log('  - 分数:', GameGlobal.databus.score);
+                console.log('  - 知识点:', GameGlobal.databus.knowledgePoints);
+                console.log('  - 安全等级:', GameGlobal.databus.securityLevel);
+                console.log('  - 错误数:', GameGlobal.databus.getWrongAnswerCount());
+                console.log('  - 正确数:', GameGlobal.databus.getCorrectAnswerCount());
+                console.log('  - 知识库按钮显示:', GameGlobal.gameInfo.showKnowledgeButton);
+                console.log('  - 知识库页面集成:', !!GameGlobal.knowledgePage);
+            }
+        }, 3000);
     </script>
 </body>
 </html> 
